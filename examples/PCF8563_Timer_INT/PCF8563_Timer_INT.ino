@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: LILYGO_L
  * @Date: 2024-03-27 10:02:26
- * @LastEditors: LILYGO_L
- * @LastEditTime: 2024-04-05 11:20:16
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-23 12:02:19
  * @License: GPL 3.0
  */
 #include "Arduino_DriveBus_Library.h"
@@ -36,10 +36,10 @@ void setup()
     Serial.println("PCF8563 initialization successfully");
 
     // 关闭时钟输出
-    PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_OUTPUT,
+    PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
                                     PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_OFF);
 
-    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Read_Device_ID());
+    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Device_ID());
 
     // 关闭定时器
     PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_TIMER,
