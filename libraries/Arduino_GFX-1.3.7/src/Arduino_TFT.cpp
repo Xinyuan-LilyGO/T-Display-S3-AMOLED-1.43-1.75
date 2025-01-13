@@ -50,8 +50,9 @@ void Arduino_TFT::startWrite()
 
 void Arduino_TFT::writePixelPreclipped(int16_t x, int16_t y, uint16_t color)
 {
-#ifdef H0175Y003AM
+#if defined H0175Y003AM || defined DO0143FMST10
     // H0175Y003AM
+    // DO0143FMST10
     //  CO5300最小开窗为2x2
     writeAddrWindow(x, y, 2, 2);
     _bus->writeRepeat(color, 4);
