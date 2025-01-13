@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: LILYGO_L
  * @Date: 2024-03-11 10:05:32
- * @LastEditors: LILYGO_L
- * @LastEditTime: 2024-05-29 10:42:41
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2025-01-13 16:30:01
  * @License: GPL 3.0
  */
 #include "Arduino.h"
@@ -20,8 +20,16 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
     LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
     LCD_SDIO2 /* SDIO2 */, LCD_SDIO3 /* SDIO3 */);
 
+#if defined DO0143FAT01
 Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
+#elif defined H0175Y003AM || defined DO0143FMST10
+Arduino_GFX *gfx = new Arduino_CO5300(bus, LCD_RST /* RST */,
+                                      0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT,
+                                      6 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
 std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
     std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);

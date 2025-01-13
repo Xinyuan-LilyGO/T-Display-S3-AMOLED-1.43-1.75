@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
- * @LastEditTime: 2024-11-29 13:38:10
+ * @LastEditTime: 2025-01-13 16:47:01
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -17,7 +17,8 @@
 | Version         | Update date     |Update description|
 | :-------------------------------: | :-------------------------------: | :-------------------------------: |
 | T-Display-S3-AMOLED-1.43_V1.0     | 2024-05-20       |初始版本      |
-| T-Display-S3-AMOLED-1.43-1.75     | 2024-11-25       |新增排线、新增H0175Y003AM屏幕适配      |
+| T-Display-S3-AMOLED-1.43-1.75_V1.0     | 2024-11-25       |新增排线、新增H0175Y003AM屏幕适配      |
+| T-Display-S3-AMOLED-1.43-1.75_V1.0     | 2025-01-13       |新增DO0143FMST10屏幕适配      |
 
 ## 购买链接
 
@@ -91,7 +92,7 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 | Example | Support IDE And Version| Description | Picture |
 | ------  | ------  | ------ | ------ | 
 | [FT3168](./examples/FT3168) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | Product factory original testing |  |
+| [Original Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | 工厂出厂测试 |  |
 | [GFX](./examples/GFX) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [GFX FT3168 Image](./examples/GFX_FT3168_Image) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [SY6970](./examples/SY6970) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
@@ -104,16 +105,18 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 | [Deep Sleep PCF8563 Scheduled Wake Up](./examples/Deep_Sleep_PCF8563_Scheduled_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [Deep Sleep PCF8563 Timer Wake Up](./examples/Deep_Sleep_PCF8563_Timer_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [SD](./examples/SD) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original_Test_H0175Y003AM](./examples/Original_Test_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
-| [Deep_Sleep_Wake_Up_H0175Y003AM](./examples/Deep_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
-| [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
+| [Original_Test_H0175Y003AM](./examples/Original_Test_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | 工厂出厂测试 H0175Y003AM 新屏幕适配|  |
+| [Original_Test_DO0143FMST10](./examples/Original_Test_DO0143FMST10) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | 工厂出厂测试 DO0143FMST10 新屏幕适配 |  |
+| [Deep_Sleep_Wake_Up_H0175Y003AM](./examples/Deep_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  H0175Y003AM 新屏幕适配 |  |
+| [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM 新屏幕适配 |  |
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
 | [Original_Test](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Original_Test]_firmware_V1.0.0.bin) | Original |  |
-| [Light_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Light_Sleep_Wake_Up]_firmware_V1.0.0.bin) | Original |  |
-| [Deep_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Deep_Sleep_Wake_Up]_firmware_V1.0.0.bin) | Original |  |
+| [Light_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Light_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
+| [Deep_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Deep_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
 | [Original_Test_H0175Y003AM](./firmware/[T-Display-S3-AMOLED-1.75_V1.0][Original_Test_H0175Y003AM]_firmware_V1.0.2.bin) | Original |  |
+| [Original_Test_DO0143FMST10](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FMST10]_firmware_202501131637.bin) | Original |  |
 
 ### PlatformIO
 1. 安装[VisualStudioCode](https://code.visualstudio.com/Download)，根据你的系统类型选择安装。

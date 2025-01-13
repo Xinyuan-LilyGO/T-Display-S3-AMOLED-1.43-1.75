@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: LILYGO_L
  * @Date: 2023-08-18 15:26:31
- * @LastEditors: LILYGO_L
- * @LastEditTime: 2024-05-29 10:45:07
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2025-01-13 16:33:29
  * @License: GPL 3.0
  */
 #include "Arduino.h"

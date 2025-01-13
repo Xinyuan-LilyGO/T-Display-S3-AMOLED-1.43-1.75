@@ -2,7 +2,7 @@
  * @Description: Sleep
  * @Author: LILYGO_L
  * @Date: 2024-03-11 10:05:32
- * @LastEditTime: 2024-11-20 11:26:25
+ * @LastEditTime: 2025-01-13 16:29:04
  * @License: GPL 3.0
  */
 #include "Arduino.h"
@@ -21,8 +21,10 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
     LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
     LCD_SDIO2 /* SDIO2 */, LCD_SDIO3 /* SDIO3 */);
 
-Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
-                                      0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
+// H0175Y003AM
+Arduino_GFX *gfx = new Arduino_CO5300(bus, LCD_RST /* RST */,
+                                      0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT,
+                                      6 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
 
 TouchDrvCST92xx CST9217;
 
