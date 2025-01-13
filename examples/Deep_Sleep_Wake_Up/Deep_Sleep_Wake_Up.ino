@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2024-03-11 10:05:32
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-13 16:30:01
+ * @LastEditTime: 2025-01-13 16:48:18
  * @License: GPL 3.0
  */
 #include "Arduino.h"
@@ -23,7 +23,7 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
 #if defined DO0143FAT01
 Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
-#elif defined H0175Y003AM || defined DO0143FMST10
+#elif defined DO0143FMST10
 Arduino_GFX *gfx = new Arduino_CO5300(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT,
                                       6 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
