@@ -331,7 +331,7 @@ void GFX_Print_Touch_Info_Loop(int32_t touch_x, int32_t touch_y, int32_t fingers
     gfx->setTextColor(BLACK);
 
     // gfx->setCursor(100, 50);
-    // gfx->printf("ID: %#X ", (int32_t)FT3168->IIC_Read_Device_ID());
+    // gfx->printf("ID: %#X ", (int32_t)FT3168->IIC_Device_ID());
 
     gfx->setCursor(100, 70);
     gfx->printf("Fingers Number:%d ", fingers_number);

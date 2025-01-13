@@ -42,7 +42,7 @@ void setup()
     PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_OUTPUT,
                                     PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_OFF);
 
-    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Read_Device_ID());
+    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Device_ID());
 
     Serial.printf("PCF8563 timed 10 second wake-up\n");
 

@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-11-26 16:22:54
+ * @LastEditTime: 2025-01-13 09:58:26
  * @License: GPL 3.0
  */
 #include <Arduino.h>
@@ -67,10 +67,12 @@ void setup()
         delay(3);
     }
 
-    gfx->setCursor(100, 100);
-    gfx->setTextSize(2);
-    gfx->setTextColor(BLACK);
-    gfx->printf("Ciallo");
+    // gfx->setCursor(100, 100);
+    // gfx->setTextSize(2);
+    // gfx->setTextColor(BLACK);
+    // gfx->printf("Ciallo");
+
+    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
 
     delay(1000);
 }

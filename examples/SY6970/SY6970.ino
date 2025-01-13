@@ -88,7 +88,7 @@ void loop()
     Serial.printf("System running time: %d\n\n", (uint32_t)millis() / 1000);
     Serial.printf("IIC_Bus.use_count(): %d\n\n", (int32_t)IIC_Bus.use_count());
 
-    Serial.printf("IIC device ID: %#X \n", (int32_t)SY6970->IIC_Read_Device_ID());
+    Serial.printf("IIC device ID: %#X \n", (int32_t)SY6970->IIC_Device_ID());
 
     Serial.printf("\nBUS Status: %s \n",
                   (SY6970->IIC_Read_Device_State(SY6970->Arduino_IIC_Power::Status_Information::POWER_BUS_STATUS)).c_str());

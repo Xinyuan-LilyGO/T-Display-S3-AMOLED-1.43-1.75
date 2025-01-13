@@ -46,7 +46,7 @@ void setup()
     PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_OUTPUT,
                                     PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_OFF);
 
-    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Read_Device_ID());
+    Serial.printf("ID: %#X \n\n", (int32_t)PCF8563->IIC_Device_ID());
     delay(1000);
 }
 
@@ -59,7 +59,7 @@ void loop()
         Serial.printf("System running time: %d\n\n", (uint32_t)millis() / 1000);
         Serial.printf("IIC_Bus.use_count(): %d\n\n", (int32_t)IIC_Bus.use_count());
 
-        Serial.printf("ID: %#X \n", (int32_t)PCF8563->IIC_Read_Device_ID());
+        Serial.printf("ID: %#X \n", (int32_t)PCF8563->IIC_Device_ID());
 
         Serial.printf("PCF8563  Weekday: %s\n",
                       PCF8563->IIC_Read_Device_State(PCF8563->Arduino_IIC_RTC::Status_Information::RTC_WEEKDAYS_DATA).c_str());

@@ -83,7 +83,7 @@ void setup()
     // FT3168->IIC_Write_Device_Value(FT3168->Arduino_IIC_Touch::Device_Value::TOUCH_AUTOMATICALLY_MONITOR_TIME,
     //                                10);
 
-    Serial.printf("ID: %#X \n\n", (int32_t)FT3168->IIC_Read_Device_ID());
+    Serial.printf("ID: %#X \n\n", (int32_t)FT3168->IIC_Device_ID());
     delay(1000);
 }
 
@@ -95,7 +95,7 @@ void loop()
     {
         FT3168->IIC_Interrupt_Flag = false;
 
-        Serial.printf("ID: %#X \n", (int32_t)FT3168->IIC_Read_Device_ID());
+        Serial.printf("ID: %#X \n", (int32_t)FT3168->IIC_Device_ID());
 
         Serial.printf("\nGesture:%s\n",
                       (FT3168->IIC_Read_Device_State(FT3168->Arduino_IIC_Touch::Status_Information::TOUCH_GESTURE_ID)).c_str());
