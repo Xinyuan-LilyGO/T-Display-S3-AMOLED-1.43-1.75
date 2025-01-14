@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
- * @LastEditTime: 2025-01-13 16:47:01
+ * @LastEditTime: 2025-01-14 15:45:25
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -112,11 +112,11 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
-| [Original_Test](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Original_Test]_firmware_V1.0.0.bin) | Original |  |
+| [Original_Test](./firmware/(更新开机启动认证图片)[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FAT01]_firmware_202501141532.bin) | Original |  |
 | [Light_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Light_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
 | [Deep_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Deep_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
-| [Original_Test_H0175Y003AM](./firmware/[T-Display-S3-AMOLED-1.75_V1.0][Original_Test_H0175Y003AM]_firmware_V1.0.2.bin) | Original |  |
-| [Original_Test_DO0143FMST10](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FMST10]_firmware_202501131637.bin) | Original |  |
+| [Original_Test_H0175Y003AM](./firmware/(更新开机启动认证图片)[T-Display-S3-AMOLED-1.75_V1.0][Original_Test_H0175Y003AM]_firmware_202501141532.bin) | Original |  |
+| [Original_Test_DO0143FMST10](./firmware/(更新开机启动认证图片)[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FMST10]_firmware_202501141532.bin.bin) | Original |  |
 
 ### PlatformIO
 1. 安装[VisualStudioCode](https://code.visualstudio.com/Download)，根据你的系统类型选择安装。

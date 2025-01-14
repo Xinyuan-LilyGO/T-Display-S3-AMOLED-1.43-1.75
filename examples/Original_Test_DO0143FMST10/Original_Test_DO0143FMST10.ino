@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-01-13 15:01:12
+ * @LastEditTime: 2025-01-14 15:30:52
  * @License: GPL 3.0
  */
 
@@ -1052,11 +1052,16 @@ void setup()
     gfx->begin();
     gfx->fillScreen(WHITE);
 
+    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+
     for (int i = 0; i <= 255; i++)
     {
         gfx->Display_Brightness(i);
         delay(3);
     }
+
+    delay(3000);
+    gfx->fillScreen(WHITE);
 
     SPI_2.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS); // SPI boots
 
