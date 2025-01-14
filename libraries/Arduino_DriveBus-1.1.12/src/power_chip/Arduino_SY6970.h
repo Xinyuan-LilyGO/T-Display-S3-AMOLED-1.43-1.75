@@ -17,7 +17,7 @@
  *          POWER_DEVICE_WATCHDOG_TIMER_RESET, // 看门狗定时器重置（喂狗）
  *          POWER_DEVICE_OTG_MODE,             // OTG模式
  *          POWER_DEVICE_CHARGING_MODE,        // 充电模式
- * 
+ *
  *          POWER_BATFET_MODE, // 电池开关
  *      };
  *
@@ -71,7 +71,7 @@
  *          POWER_TERMINATION_CHARGING_CURRENT_LIMIT, // 终止充电电流限制
  *          POWER_OTG_CURRENT_LIMIT,                  // OTG模式电流限制
  *      };
- * 
+ *
  *      注意事项：
  *      1. 该芯片在未接电池5V供电时输出波形将非常不稳定，需要连接电池使用或者软件关闭电池通道
  *      这样的话情况将会得到缓解
@@ -111,6 +111,10 @@
 
 static const uint8_t SY6970_Initialization_BufferOperations[] = {
     BO_BEGIN_TRANSMISSION,
+    BO_WRITE_C8_D8, SY6970_RD_WR_DEVICE_00, 0B00001000, // 关闭 ILIM引脚
+    BO_END_TRANSMISSION,
+
+    BO_BEGIN_TRANSMISSION,
     BO_WRITE_C8_D8, SY6970_RD_WR_DEVICE_02, 0B11011101, // 开启ADC测量功能
     BO_END_TRANSMISSION,
     BO_DELAY, 10,
@@ -118,6 +122,10 @@ static const uint8_t SY6970_Initialization_BufferOperations[] = {
     BO_BEGIN_TRANSMISSION,
     BO_WRITE_C8_D8, SY6970_RD_WR_DEVICE_07, 0B10001101, // 禁用看门狗定时喂狗功能
     BO_END_TRANSMISSION,
+
+    // BO_BEGIN_TRANSMISSION,
+    // BO_WRITE_C8_D8, SY6970_RD_WR_DEVICE_09, 0B01100100, // 在无需使用电池的情况下关闭 BATFET
+    // BO_END_TRANSMISSION,
 
     BO_DELAY, 100};
 
