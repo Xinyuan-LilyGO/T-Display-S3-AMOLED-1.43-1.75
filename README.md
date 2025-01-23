@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-14 15:46:01
+ * @LastEditTime: 2025-01-23 13:59:24
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -92,7 +92,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 | Example | Support IDE And Version| Description | Picture |
 | ------  | ------  | ------ | ------ | 
 | [FT3168](./examples/FT3168) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | Product factory original testing |  |
+| [Original Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | DO0143FAT01(DO0143FMST02)Product factory original testing |  |
 | [GFX](./examples/GFX) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [GFX FT3168 Image](./examples/GFX_FT3168_Image) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [SY6970](./examples/SY6970) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
@@ -112,7 +112,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
-| [Original_Test](./firmware/(更新开机启动认证图片)[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FAT01]_firmware_202501141532.bin) | Original |  |
+| [Original_Test](./firmware/(修改屏幕频率为6.5MHz)[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FAT01(DO0143FMST02)]_firmware_202501231354.bin) | Original |  |
 | [Light_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Light_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
 | [Deep_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Deep_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
 | [Original_Test_H0175Y003AM](./firmware/(更新开机启动认证图片)[T-Display-S3-AMOLED-1.75_V1.0][Original_Test_H0175Y003AM]_firmware_202501141532.bin) | Original |  |

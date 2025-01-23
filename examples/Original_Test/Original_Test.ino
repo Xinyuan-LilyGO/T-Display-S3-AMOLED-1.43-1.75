@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-01-14 15:30:44
+ * @LastEditTime: 2025-01-23 13:50:29
  * @License: GPL 3.0
  */
 
@@ -1055,7 +1055,7 @@ void setup()
     PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
                                     PCF8563->Arduino_IIC_RTC::Device_Mode::RTC_CLOCK_OUTPUT_OFF);
 
-    gfx->begin();
+    gfx->begin(6500000);
     gfx->fillScreen(WHITE);
 
     gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
