@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-23 15:05:38
+ * @LastEditTime: 2025-01-24 09:03:34
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -239,7 +239,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 * A. Please hold down the "BOOT-0" button and try downloading the program again.
 
 ## Project
-* [T-Display-S3-AMOLED-1.43_V1.0](./project/T-Display-S3-AMOLED-1.43_V1.0.pdf)
+* [T-Display-S3-AMOLED-1.43-1.75_V1.0](./project/T-Display-S3-AMOLED-1.43-1.75_V1.0.pdf)
 
 ## Information
 * [FT3168](./information/FT3168.pdf)

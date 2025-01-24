@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
- * @LastEditTime: 2025-01-23 13:58:31
+ * @LastEditTime: 2025-01-24 09:03:17
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -239,7 +239,7 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 * A. 请按住“BOOT-0”按键重新下载程序。
 
 ## 项目
-* [T-Display-S3-AMOLED-1.43_V1.0](./project/T-Display-S3-AMOLED-1.43_V1.0.pdf)
+* [T-Display-S3-AMOLED-1.43-1.75_V1.0](./project/T-Display-S3-AMOLED-1.43-1.75_V1.0.pdf)
 
 ## 资料
 * [PCF8563](./information/PCF8563.pdf)
