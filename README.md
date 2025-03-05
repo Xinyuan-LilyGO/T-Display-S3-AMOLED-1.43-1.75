@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-24 09:03:34
+ * @LastEditTime: 2025-03-05 18:07:02
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -109,6 +109,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 | [Original_Test_DO0143FMST10](./examples/Original_Test_DO0143FMST10) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | DO0143FMST10 new screen adaptation |  |
 | [Deep_Sleep_Wake_Up_H0175Y003AM](./examples/Deep_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
 | [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
+| [lvgl_benchmark](./examples/lvgl_benchmark) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
