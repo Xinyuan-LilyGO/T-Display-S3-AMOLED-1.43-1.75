@@ -1,8 +1,8 @@
 /*
- * @Description: Lvgl benchmark
+ * @Description: lvgl benchmark
  * @Author: LILYGO_L
  * @Date: 2024-09-05 08:59:53
- * @LastEditTime: 2024-11-26 16:23:32
+ * @LastEditTime: 2025-03-05 18:06:08
  * @License: GPL 3.0
  */
 #include "lvgl.h"
@@ -22,14 +22,16 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
     LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
     LCD_SDIO2 /* SDIO2 */, LCD_SDIO3 /* SDIO3 */);
 
-// DO0143FAT01
-// Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
-//                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
-
-// H0175Y003AM
+#if defined DO0143FAT01
+Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
+                                      0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
+#elif defined H0175Y003AM || defined DO0143FMST10
 Arduino_GFX *gfx = new Arduino_CO5300(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT,
                                       6 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
 TouchDrvCST92xx CST9217;
 
