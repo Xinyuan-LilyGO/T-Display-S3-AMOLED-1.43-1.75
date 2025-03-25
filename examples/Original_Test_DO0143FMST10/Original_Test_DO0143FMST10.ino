@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-01-14 15:30:52
+ * @LastEditTime: 2025-03-25 18:05:24
  * @License: GPL 3.0
  */
 
@@ -363,7 +363,7 @@ void GFX_Print_Voice_Speaker_Info_Loop(int16_t left_channel, int16_t right_chann
 
 void GFX_Print_Time_Info_Loop()
 {
-    gfx->fillRoundRect(130, 30, 206, 120, 10, WHITE);
+    gfx->fillRoundRect(130, 30, 206, 120, 9, WHITE);
 
     if (!Wifi_Connection_Failure_Flag)
     {
