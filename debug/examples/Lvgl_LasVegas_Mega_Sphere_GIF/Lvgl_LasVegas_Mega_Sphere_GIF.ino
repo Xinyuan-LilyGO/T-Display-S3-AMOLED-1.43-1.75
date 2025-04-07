@@ -2,7 +2,7 @@
  * @Description: Lvgl benchmark
  * @Author: LILYGO_L
  * @Date: 2024-09-05 08:59:53
- * @LastEditTime: 2024-11-26 16:23:17
+ * @LastEditTime: 2025-04-07 15:59:54
  * @License: GPL 3.0
  */
 #include "lvgl.h"
@@ -95,8 +95,8 @@ void lvgl_initialization(void)
 {
     lv_init();
 
-    lv_color_t *buf_1 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * 150, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-    lv_color_t *buf_2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * 150, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    lv_color_t *buf_1 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * 1024, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    lv_color_t *buf_2 = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * LCD_WIDTH * 1024, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
     while ((!buf_1) || (!buf_2))
     {
@@ -104,7 +104,7 @@ void lvgl_initialization(void)
         delay(1000);
     }
 
-    lv_disp_draw_buf_init(&draw_buf, buf_1, buf_2, LCD_WIDTH * 150);
+    lv_disp_draw_buf_init(&draw_buf, buf_1, buf_2, LCD_WIDTH * 1024);
 
     /* Initialize the display */
     lv_disp_drv_init(&disp_drv);
@@ -156,10 +156,10 @@ void setup()
     
     lvgl_initialization();
 
-    LV_IMG_DECLARE(LasVegas_Mega_Sphere_GIF);
+    LV_IMG_DECLARE(LasVegas_Mega_Sphere);
 
     lv_obj_t *img = lv_gif_create(lv_scr_act());
-    lv_gif_set_src(img, &LasVegas_Mega_Sphere_GIF);
+    lv_gif_set_src(img, &LasVegas_Mega_Sphere);
     lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
     for (uint32_t i = 0; i < 5; i++)
     {
