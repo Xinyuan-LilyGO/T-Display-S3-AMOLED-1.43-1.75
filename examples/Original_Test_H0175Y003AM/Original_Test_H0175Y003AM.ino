@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-01-14 15:30:56
+ * @LastEditTime: 2025-04-26 11:48:37
  * @License: GPL 3.0
  */
 
@@ -1085,7 +1085,11 @@ void setup()
     gfx->begin();
     gfx->fillScreen(WHITE);
 
-    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+    //(H741-01)
+    // gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+
+    //(H741-02)
+    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_4, LCD_WIDTH, LCD_HEIGHT); // RGB
 
     for (int i = 0; i <= 255; i++)
     {
