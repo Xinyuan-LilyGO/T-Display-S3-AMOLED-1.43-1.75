@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-05-08 09:49:13
+ * @LastEditTime: 2025-05-08 11:17:19
  * @License: GPL 3.0
  */
 #include <Arduino.h>
@@ -61,7 +61,7 @@ void setup()
     gfx->begin(80000000);
     gfx->fillScreen(WHITE);
 
-    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
 
     for (int i = 0; i <= 255; i++)
     {
