@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-13 16:30:48
+ * @LastEditTime: 2025-05-08 09:43:58
  * @License: GPL 3.0
  */
 #include <Arduino.h>
@@ -67,6 +67,8 @@ void setup()
         delay(3);
     }
 
+    // gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT);
+
     gfx->setCursor(100, 100);
     gfx->setTextSize(2);
     gfx->setTextColor(BLACK);
@@ -78,7 +80,7 @@ void setup()
 
 void loop()
 {
-    // Serial.printf("System running time: %d\n\n", (uint32_t)millis() / 1000);
+    Serial.printf("System running time: %d\n\n", (uint32_t)millis() / 1000);
 
     if (FT3168->IIC_Interrupt_Flag == true)
     {
@@ -99,6 +101,9 @@ void loop()
                 gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
                 break;
             case 2:
+                gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+                break;
+            case 3:
                 gfx->fillScreen(PINK);
                 gfx->setCursor(100, 100);
                 gfx->setTextColor(YELLOW);
@@ -107,7 +112,7 @@ void loop()
 
                 gfx->setTextSize(2);
                 break;
-            case 3:
+            case 4:
                 gfx->fillScreen(PINK);
                 gfx->setCursor(100, 100);
                 gfx->setTextColor(YELLOW);
@@ -121,7 +126,7 @@ void loop()
 
             Image_Flag++;
 
-            if (Image_Flag > 3)
+            if (Image_Flag > 4)
             {
                 Image_Flag = 0;
             }
