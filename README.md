@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-03-05 18:07:02
+ * @LastEditTime: 2025-06-23 18:13:43
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -89,29 +89,32 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 
 ### Examples Support
 
-| Example | Support IDE And Version| Description | Picture |
-| ------  | ------  | ------ | ------ | 
-| [FT3168](./examples/FT3168) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | DO0143FAT01(DO0143FMST02)Product factory original testing |  |
-| [GFX](./examples/GFX) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [GFX FT3168 Image](./examples/GFX_FT3168_Image) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [SY6970](./examples/SY6970) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [SY6970 OTG](./examples/SY6970_OTG) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Light Sleep Wake Up](./examples/Light_Sleep_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Deep Sleep Wake Up](./examples/Deep_Sleep_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [PCF8563](./examples/PCF8563) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [PCF8563 Scheduled INT](./examples/PCF8563_Scheduled_INT) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [PCF8563 Timer INT](./examples/PCF8563_Timer_INT) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Deep Sleep PCF8563 Scheduled Wake Up](./examples/Deep_Sleep_PCF8563_Scheduled_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Deep Sleep PCF8563 Timer Wake Up](./examples/Deep_Sleep_PCF8563_Timer_Wake_Up) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [SD](./examples/SD) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original_Test_H0175Y003AM](./examples/Original_Test_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
-| [Original_Test_DO0143FMST10](./examples/Original_Test_DO0143FMST10) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | DO0143FMST10 new screen adaptation |  |
-| [Deep_Sleep_Wake_Up_H0175Y003AM](./examples/Deep_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
-| [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | H0175Y003AM new screen adaptation |  |
-| [lvgl_benchmark](./examples/lvgl_benchmark) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
+| example | `[platformio ide][espressif32-v6.5.0]`<br />`[arduino ide][esp32_v2.0.14]`|`[vscode][esp-idf-v5.4.0]`| description | picture |
+| ------  | ------  | ------ | ------ | ------ |
+| [FT3168](./examples/FT3168) | <p align="center">![alt text][supported] | | |  |
+| [Original Test](./examples/Original_Test) | <p align="center">![alt text][supported]  || DO0143FAT01(DO0143FMST02)Product factory original testing |  |
+| [GFX](./examples/GFX) | <p align="center">![alt text][supported] |  | |  |
+| [GFX FT3168 Image](./examples/GFX_FT3168_Image) | <p align="center">![alt text][supported] |  | |  |
+| [SY6970](./examples/SY6970) | <p align="center">![alt text][supported] | | |  |
+| [SY6970 OTG](./examples/SY6970_OTG) | <p align="center">![alt text][supported] |  | |  |
+| [Light Sleep Wake Up](./examples/Light_Sleep_Wake_Up) | <p align="center">![alt text][supported] |  | |  |
+| [Deep Sleep Wake Up](./examples/Deep_Sleep_Wake_Up) | <p align="center">![alt text][supported] |  | |  |
+| [PCF8563](./examples/PCF8563) | <p align="center">![alt text][supported] |  | |  |
+| [PCF8563 Scheduled INT](./examples/PCF8563_Scheduled_INT) | <p align="center">![alt text][supported] | |  |  |
+| [PCF8563 Timer INT](./examples/PCF8563_Timer_INT) | <p align="center">![alt text][supported] |  | |  |
+| [Deep Sleep PCF8563 Scheduled Wake Up](./examples/Deep_Sleep_PCF8563_Scheduled_Wake_Up) | <p align="center">![alt text][supported] |  | |  |
+| [Deep Sleep PCF8563 Timer Wake Up](./examples/Deep_Sleep_PCF8563_Timer_Wake_Up) | <p align="center">![alt text][supported] |  | |  |
+| [SD](./examples/SD) | <p align="center">![alt text][supported] |  | |  |
+| [Original_Test_H0175Y003AM](./examples/Original_Test_H0175Y003AM) | <p align="center">![alt text][supported]  || H0175Y003AM new screen adaptation |  |
+| [Original_Test_DO0143FMST10](./examples/Original_Test_DO0143FMST10) | <p align="center">![alt text][supported]  || DO0143FMST10 new screen adaptation |  |
+| [Deep_Sleep_Wake_Up_H0175Y003AM](./examples/Deep_Sleep_Wake_Up_H0175Y003AM) | <p align="center">![alt text][supported] | | H0175Y003AM new screen adaptation |  |
+| [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | <p align="center">![alt text][supported]  || H0175Y003AM new screen adaptation |  |
+| [lvgl_benchmark](./examples/lvgl_benchmark) | <p align="center">![alt text][supported] |  |  |
+| [iic_scan](./main/examples/iic_scan) |  |<p align="center">![alt text][supported]  |  |
 
-| Firmware | Description | Picture |
+[supported]: https://img.shields.io/badge/-supported-green "example"
+
+| firmware | description | picture |
 | ------  | ------  | ------ |
 | [Original_Test](./firmware/(修改屏幕频率为6.5MHz)[T-Display-S3-AMOLED-1.43_V1.0][Original_Test_DO0143FAT01(DO0143FMST02)]_firmware_202501231354.bin) | Original |  |
 | [Light_Sleep](./firmware/[T-Display-S3-AMOLED-1.43_V1.0][Light_Sleep_Wake_Up]_firmware_V1.0.0.bin) |  |  |
