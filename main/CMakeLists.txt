@@ -1,6 +1,8 @@
 #这里选择你需要编译的项目
 if(CONFIG_EXAMPLE_BUILD_IIC_SCAN)
     set(project_path "examples/iic_scan/")
+elseif(CONFIG_EXAMPLE_BUILD_TOUCH)
+    set(project_path "examples/touch/")
 endif()
         
 idf_component_register(SRC_DIRS ${project_path} 

@@ -20,19 +20,21 @@ menu "Example Configuration"
     #     string "Default image cache size. 0 to disable caching"
     #     default "2522880"
 
-    # config LV_USE_MEM_MONITOR
-    #     bool "LV_USE_MEM_MONITOR"
-    #     default y
+    config LV_USE_MEM_MONITOR
+        bool "LV_USE_MEM_MONITOR"
+        default y
 
-    # config LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT
-    #     bool "LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT"
-    #     default y
+    config LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT
+        bool "LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT"
+        default y
 
     choice
         prompt "Select the example to build"
-        default EXAMPLE_BUILD_IIC_SCAN
+        default EXAMPLE_BUILD_TOUCH
             config EXAMPLE_BUILD_IIC_SCAN
                 bool "iic_scan"
+            config EXAMPLE_BUILD_TOUCH
+                bool "touch"
     endchoice
 
 endmenu
