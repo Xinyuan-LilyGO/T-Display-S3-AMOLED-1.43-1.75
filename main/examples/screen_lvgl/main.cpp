@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-06-24 17:47:08
+ * @LastEditTime: 2025-06-24 17:47:13
  * @License: GPL 3.0
  */
 #include <stdio.h>

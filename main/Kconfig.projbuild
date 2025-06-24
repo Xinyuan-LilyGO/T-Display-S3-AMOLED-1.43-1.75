@@ -35,6 +35,8 @@ menu "Example Configuration"
                 bool "iic_scan"
             config EXAMPLE_BUILD_TOUCH
                 bool "touch"
+            config EXAMPLE_BUILD_SCREEN_LVGL
+                bool "screen_lvgl"
     endchoice
 
 endmenu
