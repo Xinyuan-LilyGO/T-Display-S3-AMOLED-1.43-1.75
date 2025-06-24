@@ -1,8 +1,8 @@
 /*
- * @Description: iic_scan
+ * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-06-24 16:05:40
+ * @LastEditTime: 2025-06-24 16:08:27
  * @License: GPL 3.0
  */
 #include <stdio.h>
