@@ -2,14 +2,14 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-06-05 13:01:59
- * @LastEditTime: 2025-06-26 18:14:27
+ * @LastEditTime: 2025-07-03 18:03:07
  */
 #pragma once
 
-//这里选择你使用的屏幕
-// #define DO0143FAT01 //DO0143FMST02//1.43 inches (SH8601 FT3168)
-// #define H0175Y003AM //1.75 inches (CO5300 CST9217)
-#define DO0143FMST10 //1.43 inches (CO5300 FT3168)
+// 这里选择你使用的屏幕
+//  #define DO0143FAT01 //DO0143FMST02//1.43 inches (SH8601 FT3168)
+//  #define H0175Y003AM //1.75 inches (CO5300 CST9217)
+#define DO0143FMST10 // 1.43 inches (CO5300 FT3168)
 
 #define LCD_SDIO0 11
 #define LCD_SDIO1 13
@@ -18,8 +18,16 @@
 #define LCD_SCLK 12
 #define LCD_CS 10
 #define LCD_RST 17
+
+#if defined H0175Y003AM
 #define LCD_WIDTH 466
 #define LCD_HEIGHT 466
+#elif defined DO0143FAT01 || defined DO0143FMST10
+#define LCD_WIDTH 471
+#define LCD_HEIGHT 467
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
 #define LCD_EN 16
 

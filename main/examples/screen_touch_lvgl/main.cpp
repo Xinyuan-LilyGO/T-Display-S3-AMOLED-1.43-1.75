@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-02 17:41:37
+ * @LastEditTime: 2025-07-03 18:17:29
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -21,6 +21,7 @@
 #include "esp_lcd_co5300.h"
 #include "lvgl.h"
 #include "esp_timer.h"
+#include "material_16bit_466x466px.h"
 
 #define LVGL_TICK_PERIOD_MS 1
 
@@ -47,7 +48,7 @@ auto Qspi_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Qspi>(LCD_SDIO0, LCD_S
 
 auto Touch = std::make_unique<Cpp_Bus_Driver::Ft3x68>(Iic_Bus, FT3168_DEVICE_DEFAULT_ADDRESS, DEFAULT_CPP_BUS_DRIVER_VALUE);
 
-auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_CS, LCD_RST, 6, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
+auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
@@ -101,13 +102,18 @@ void Lvgl_Init(void)
     lv_display_set_flush_cb(display, [](lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
                             {
                                 // esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t)lv_display_get_user_data(disp);
+
+                                auto screen = static_cast<Cpp_Bus_Driver::Co5300 *>(lv_display_get_user_data(disp));
+
                                 int offsetx1 = area->x1;
                                 int offsetx2 = area->x2;
                                 int offsety1 = area->y1;
                                 int offsety2 = area->y2;
                                 // pass the draw buffer to the driver
                                 // esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, px_map);
-                            });
+                                screen->send_color_stream(offsetx1, offsetx2, offsety1 , offsety2 , px_map);
+                                
+                                lv_display_flush_ready(disp); });
 
     lv_indev_t *indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER); /*Touchpad should have POINTER type*/
@@ -129,11 +135,11 @@ void Screen_Init()
 {
     printf("Screen_Init\n");
 
-    Screen->begin(SPI_MASTER_FREQ_80M);
-
 #if defined DO0143FAT01
 
 #elif defined H0175Y003AM || defined DO0143FMST10
+
+    Screen->begin(SPI_MASTER_FREQ_10M);
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
@@ -239,6 +245,8 @@ extern "C" void app_main(void)
     Touch_Init();
 
     Screen_Init();
+
+    Screen->send_color_stream(0, 0, 466, 466, gImage_2);
 
     // Lvgl_Init();
     // xTaskCreate(lvgl_ui_task, "lvgl_ui_task", 10 * 1024, NULL, 1, NULL);
