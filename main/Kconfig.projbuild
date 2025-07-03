@@ -30,13 +30,13 @@ menu "Example Configuration"
 
     choice
         prompt "Select the example to build"
-        default EXAMPLE_BUILD_TOUCH
+        default EXAMPLE_BUILD_SCREEN_TOUCH_LVGL
             config EXAMPLE_BUILD_IIC_SCAN
                 bool "iic_scan"
             config EXAMPLE_BUILD_TOUCH
                 bool "touch"
-            config EXAMPLE_BUILD_SCREEN_LVGL
-                bool "screen_lvgl"
+            config EXAMPLE_BUILD_SCREEN_TOUCH_LVGL
+                bool "screen_touch_lvgl"
     endchoice
 
 endmenu

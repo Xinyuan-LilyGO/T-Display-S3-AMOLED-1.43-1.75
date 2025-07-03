@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-06-24 17:47:08
+ * @LastEditTime: 2025-06-24 17:56:40
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -153,7 +153,6 @@ extern "C" void app_main(void)
                         printf("touch num [%d] x: %d y: %d\n", i + 1, tp.info[i].x, tp.info[i].y);
                     }
                 }
-            }
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."

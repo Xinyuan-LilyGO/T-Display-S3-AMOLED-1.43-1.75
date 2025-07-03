@@ -3,8 +3,8 @@ if(CONFIG_EXAMPLE_BUILD_IIC_SCAN)
     set(project_path "examples/iic_scan/")
 elseif(CONFIG_EXAMPLE_BUILD_TOUCH)
     set(project_path "examples/touch/")
-elseif(CONFIG_EXAMPLE_BUILD_SCREEN_LVGL)
-    set(project_path "examples/screen_lvgl/")
+elseif(CONFIG_EXAMPLE_BUILD_SCREEN_TOUCH_LVGL)
+    set(project_path "examples/screen_touch_lvgl/")
 endif()
         
 idf_component_register(SRC_DIRS ${project_path} 

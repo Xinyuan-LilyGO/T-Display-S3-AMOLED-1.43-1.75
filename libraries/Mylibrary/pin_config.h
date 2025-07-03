@@ -2,14 +2,14 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-06-05 13:01:59
- * @LastEditTime: 2025-04-26 11:53:07
+ * @LastEditTime: 2025-06-26 15:18:55
  */
 #pragma once
 
 //这里选择你使用的屏幕
 // #define DO0143FAT01 //DO0143FMST02//1.43 inches (SH8601 FT3168)
-#define H0175Y003AM //1.75 inches (CO5300 CST9217)
-// #define DO0143FMST10 //1.43 inches (CO5300 FT3168)
+// #define H0175Y003AM //1.75 inches (CO5300 CST9217)
+#define DO0143FMST10 //1.43 inches (CO5300 FT3168)
 
 #define LCD_SDIO0 11
 #define LCD_SDIO1 13

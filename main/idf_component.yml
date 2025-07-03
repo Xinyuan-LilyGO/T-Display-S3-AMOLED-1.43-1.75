@@ -5,3 +5,5 @@ dependencies:
     version: "1.0.0"
   waveshare/esp_lcd_touch_cst9217:
     version: "1.0.3"
+  kodediy/esp_lcd_co5300:
+    version: "1.0.2"
