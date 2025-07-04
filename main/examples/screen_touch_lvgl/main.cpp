@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-03 18:17:29
+ * @LastEditTime: 2025-07-04 10:25:28
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -21,7 +21,7 @@
 #include "esp_lcd_co5300.h"
 #include "lvgl.h"
 #include "esp_timer.h"
-#include "material_16bit_466x466px.h"
+#include "image_rgb565_16bit_471x467px.h"
 
 #define LVGL_TICK_PERIOD_MS 1
 
@@ -48,7 +48,7 @@ auto Qspi_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Qspi>(LCD_SDIO0, LCD_S
 
 auto Touch = std::make_unique<Cpp_Bus_Driver::Ft3x68>(Iic_Bus, FT3168_DEVICE_DEFAULT_ADDRESS, DEFAULT_CPP_BUS_DRIVER_VALUE);
 
-auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
+auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_WIDTH, LCD_HEIGHT, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
@@ -246,7 +246,7 @@ extern "C" void app_main(void)
 
     Screen_Init();
 
-    Screen->send_color_stream(0, 0, 466, 466, gImage_2);
+    Screen->send_color_stream(0, 0, LCD_WIDTH, LCD_HEIGHT, gImage_1);
 
     // Lvgl_Init();
     // xTaskCreate(lvgl_ui_task, "lvgl_ui_task", 10 * 1024, NULL, 1, NULL);

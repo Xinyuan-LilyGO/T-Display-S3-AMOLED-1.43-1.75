@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-07-02 09:56:43
+ * @LastEditTime: 2025-07-04 09:02:38
  * @License: GPL 3.0
  */
 #include <Arduino.h>
@@ -65,16 +65,6 @@ void setup()
     {
         gfx->Display_Brightness(i);
         delay(3);
-    }
-
-    while (1)
-    {
-        gfx->fillScreen(RED);
-        delay(1000);
-        gfx->fillScreen(GREEN);
-        delay(1000);
-        gfx->fillScreen(BLUE);
-        delay(1000);
     }
 
     // gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT);
