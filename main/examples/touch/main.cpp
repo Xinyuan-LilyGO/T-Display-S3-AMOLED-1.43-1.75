@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-06-24 17:56:40
+ * @LastEditTime: 2025-07-07 11:41:37
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -144,14 +144,20 @@ extern "C" void app_main(void)
 
                 Cpp_Bus_Driver::Ft3x68::Touch_Point tp;
 
-                if (Touch->get_multiple_touch_point(tp) == true)
-                {
-                    printf("touch finger: %d\n", tp.finger_count);
+                // if (Touch->get_multiple_touch_point(tp) == true)
+                // {
+                //     printf("touch finger: %d\n", tp.finger_count);
 
-                    for (uint8_t i = 0; i < tp.info.size(); i++)
-                    {
-                        printf("touch num [%d] x: %d y: %d\n", i + 1, tp.info[i].x, tp.info[i].y);
-                    }
+                //     for (uint8_t i = 0; i < tp.info.size(); i++)
+                //     {
+                //         printf("touch num [%d] x: %d y: %d\n", i + 1, tp.info[i].x, tp.info[i].y);
+                //     }
+                // }
+
+                if (Touch->get_single_touch_point(tp, 1) == true)
+                {
+                    // printf("touch finger: %d\n", tp.finger_count);
+                    printf("touch num [1] x: %d y: %d\n", tp.info[0].x, tp.info[0].y);
                 }
 
 #else
