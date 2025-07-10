@@ -35,6 +35,8 @@ auto Touch = std::make_unique<Cpp_Bus_Driver::Ft3x68>(Iic_Bus, FT3168_DEVICE_DEF
 #error "Unknown macro definition. Please select the correct macro definition."
 #endif
 
+auto ESP32S3 = std::make_unique<Cpp_Bus_Driver::Tool>();
+
 // void IIC_Scan(void)
 // {
 //     std::vector<uint8_t> address;
@@ -106,16 +108,16 @@ extern "C" void app_main(void)
 
 #elif defined DO0143FAT01 || defined DO0143FMST10
 
-    Touch->create_gpio_interrupt(TP_INT, Cpp_Bus_Driver::Tool::Interrupt_Mode::FALLING,
-                                 [](void *arg) -> IRAM_ATTR void
-                                 {
-                                     interrupt_flag = true;
-                                 });
-
     Touch->begin();
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
 #endif
+
+    ESP32S3->create_gpio_interrupt(TP_INT, Cpp_Bus_Driver::Tool::Interrupt_Mode::FALLING,
+                                   [](void *arg) -> IRAM_ATTR void
+                                   {
+                                       interrupt_flag = true;
+                                   });
 
     while (1)
     {

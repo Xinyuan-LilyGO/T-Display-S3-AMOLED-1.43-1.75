@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-10 18:05:44
+ * @LastEditTime: 2025-07-10 18:17:13
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -31,8 +31,6 @@ volatile bool interrupt_flag = false;
 // LVGL library is not thread-safe, this example will call LVGL APIs from different tasks, so use a mutex to protect it
 _lock_t lvgl_api_lock;
 
-auto ESP32S3 = std::make_unique<Cpp_Bus_Driver::Tool>();
-
 #if defined H0175Y003AM
 
 esp_lcd_touch_handle_t Touch = NULL;
@@ -53,6 +51,8 @@ auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_WIDTH, LCD_
 #error "Unknown macro definition. Please select the correct macro definition."
 #endif
 
+auto ESP32S3 = std::make_unique<Cpp_Bus_Driver::Tool>();
+
 // void IIC_Scan(void)
 // {
 //     std::vector<uint8_t> address;
@@ -72,7 +72,51 @@ auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_WIDTH, LCD_
 
 void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
 {
-    data->state = LV_INDEV_STATE_REL;
+    if (interrupt_flag == true)
+    {
+#if defined H0175Y003AM
+        // uint16_t tp_x;
+        // uint16_t tp_y;
+        // uint8_t tp_cnt = 0;
+
+        // esp_lcd_touch_read_data(Touch);
+
+        // /* Read data from touch controller */
+        // bool tp_pressed = esp_lcd_touch_get_coordinates(Touch, &tp_x, &tp_y, NULL, &tp_cnt, 1);
+        // if (tp_pressed && tp_cnt > 0)
+        // {
+        //     printf("touch finger: %d\n", tp_cnt);
+        //     printf("touch num [%d] x: %d y: %d\n", tp_cnt, tp_x, tp_y);
+        // }
+
+#elif (defined DO0143FAT01) || (defined DO0143FMST10)
+
+        Cpp_Bus_Driver::Ft3x68::Touch_Point tp;
+
+        if (Touch->get_single_touch_point(tp) == true)
+        {
+            printf("touch finger: %d\n x: %d y: %d\n", tp.finger_count, tp.info[0].x, tp.info[0].y);
+
+            data->state = LV_INDEV_STATE_PR;
+
+            /*Set the coordinates*/
+            data->point.x = tp.info[0].x;
+            data->point.y = tp.info[0].y;
+        }
+        else
+        {
+            data->state = LV_INDEV_STATE_REL;
+        }
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
+
+        interrupt_flag = false;
+    }
+    else
+    {
+        data->state = LV_INDEV_STATE_REL;
+    }
 }
 
 void Lvgl_Init(void)
@@ -200,16 +244,16 @@ void Touch_Init()
 
 #elif defined DO0143FAT01 || defined DO0143FMST10
 
-    Touch->create_gpio_interrupt(TP_INT, Cpp_Bus_Driver::Tool::Interrupt_Mode::FALLING,
-                                 [](void *arg) -> IRAM_ATTR void
-                                 {
-                                     interrupt_flag = true;
-                                 });
-
     Touch->begin();
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
 #endif
+
+    ESP32S3->create_gpio_interrupt(TP_INT, Cpp_Bus_Driver::Tool::Interrupt_Mode::FALLING,
+                                   [](void *arg) -> IRAM_ATTR void
+                                   {
+                                       interrupt_flag = true;
+                                   });
 }
 
 void lvgl_ui_task(void *arg)
@@ -280,52 +324,52 @@ extern "C" void app_main(void)
     //     heap_caps_free(white_buf);
     // }
 
-    while (1)
-    {
-        // IIC_Scan();
+    //     while (1)
+    //     {
+    //         // IIC_Scan();
 
-        if (esp_log_timestamp() > Cycle_Time)
-        {
-            if (interrupt_flag == true)
-            {
-#if defined H0175Y003AM
-                uint16_t tp_x;
-                uint16_t tp_y;
-                uint8_t tp_cnt = 0;
+    //         if (esp_log_timestamp() > Cycle_Time)
+    //         {
+    //             if (interrupt_flag == true)
+    //             {
+    // #if defined H0175Y003AM
+    //                 uint16_t tp_x;
+    //                 uint16_t tp_y;
+    //                 uint8_t tp_cnt = 0;
 
-                esp_lcd_touch_read_data(Touch);
+    //                 esp_lcd_touch_read_data(Touch);
 
-                /* Read data from touch controller */
-                bool tp_pressed = esp_lcd_touch_get_coordinates(Touch, &tp_x, &tp_y, NULL, &tp_cnt, 1);
-                if (tp_pressed && tp_cnt > 0)
-                {
-                    printf("touch finger: %d\n", tp_cnt);
-                    printf("touch num [%d] x: %d y: %d\n", tp_cnt, tp_x, tp_y);
-                }
+    //                 /* Read data from touch controller */
+    //                 bool tp_pressed = esp_lcd_touch_get_coordinates(Touch, &tp_x, &tp_y, NULL, &tp_cnt, 1);
+    //                 if (tp_pressed && tp_cnt > 0)
+    //                 {
+    //                     printf("touch finger: %d\n", tp_cnt);
+    //                     printf("touch num [%d] x: %d y: %d\n", tp_cnt, tp_x, tp_y);
+    //                 }
 
-#elif (defined DO0143FAT01) || (defined DO0143FMST10)
+    // #elif (defined DO0143FAT01) || (defined DO0143FMST10)
 
-                Cpp_Bus_Driver::Ft3x68::Touch_Point tp;
+    //                 Cpp_Bus_Driver::Ft3x68::Touch_Point tp;
 
-                if (Touch->get_multiple_touch_point(tp) == true)
-                {
-                    printf("touch finger: %d\n", tp.finger_count);
+    //                 if (Touch->get_multiple_touch_point(tp) == true)
+    //                 {
+    //                     printf("touch finger: %d\n", tp.finger_count);
 
-                    for (uint8_t i = 0; i < tp.info.size(); i++)
-                    {
-                        printf("touch num [%d] x: %d y: %d\n", i + 1, tp.info[i].x, tp.info[i].y);
-                    }
-                }
+    //                     for (uint8_t i = 0; i < tp.info.size(); i++)
+    //                     {
+    //                         printf("touch num [%d] x: %d y: %d\n", i + 1, tp.info[i].x, tp.info[i].y);
+    //                     }
+    //                 }
 
-#else
-#error "Unknown macro definition. Please select the correct macro definition."
-#endif
+    // #else
+    // #error "Unknown macro definition. Please select the correct macro definition."
+    // #endif
 
-                interrupt_flag = false;
-            }
-            Cycle_Time = esp_log_timestamp() + 100;
-        }
+    //                 interrupt_flag = false;
+    //             }
+    //             Cycle_Time = esp_log_timestamp() + 100;
+    //         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
+    //         vTaskDelay(pdMS_TO_TICKS(10));
+    //     }
 }
