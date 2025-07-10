@@ -5,7 +5,7 @@ menu "Example Configuration"
 
     config LV_DEF_REFR_PERIOD
         string "Default refresh period (ms)"
-        default "30"
+        default "25"
 
     config LV_MEM_SIZE_KILOBYTES
         string "Size of the memory used by `lv_malloc()` in kilobytes (>= 2kB)"
@@ -19,14 +19,6 @@ menu "Example Configuration"
     # config LV_CACHE_DEF_SIZE
     #     string "Default image cache size. 0 to disable caching"
     #     default "2522880"
-
-    config LV_USE_MEM_MONITOR
-        bool "LV_USE_MEM_MONITOR"
-        default y
-
-    config LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT
-        bool "LV_MEM_MONITOR_ALIGN_BOTTOM_LEFT"
-        default y
 
     choice
         prompt "Select the example to build"

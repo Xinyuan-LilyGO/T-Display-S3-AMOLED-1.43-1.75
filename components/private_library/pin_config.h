@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-06-05 13:01:59
- * @LastEditTime: 2025-07-03 18:03:07
+ * @LastEditTime: 2025-07-10 15:10:09
  */
 #pragma once
 
@@ -23,7 +23,7 @@
 #define LCD_WIDTH 466
 #define LCD_HEIGHT 466
 #elif defined DO0143FAT01 || defined DO0143FMST10
-#define LCD_WIDTH 471
+#define LCD_WIDTH 473
 #define LCD_HEIGHT 467
 #else
 #error "Unknown macro definition. Please select the correct macro definition."

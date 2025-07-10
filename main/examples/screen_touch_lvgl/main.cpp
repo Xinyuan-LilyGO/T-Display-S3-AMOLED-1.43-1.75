@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-04 10:25:28
+ * @LastEditTime: 2025-07-10 18:05:44
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -18,10 +18,9 @@
 #include "cpp_bus_driver_library.h"
 #include "esp_lcd_touch_cst9217.h"
 #include "esp_lcd_sh8601.h"
-#include "esp_lcd_co5300.h"
 #include "lvgl.h"
 #include "esp_timer.h"
-#include "image_rgb565_16bit_471x467px.h"
+#include "image_rgb565_16bit_473x467px.h"
 
 #define LVGL_TICK_PERIOD_MS 1
 
@@ -101,18 +100,19 @@ void Lvgl_Init(void)
 
     lv_display_set_flush_cb(display, [](lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
                             {
-                                // esp_lcd_panel_handle_t panel_handle = (esp_lcd_panel_handle_t)lv_display_get_user_data(disp);
-
                                 auto screen = static_cast<Cpp_Bus_Driver::Co5300 *>(lv_display_get_user_data(disp));
+                                int x = area->x1;
+                                int y = area->y1;
+                                int w = area->x2 - area->x1 + 1;
+                                int h = area->y2 - area->y1 + 1;
 
-                                int offsetx1 = area->x1;
-                                int offsetx2 = area->x2;
-                                int offsety1 = area->y1;
-                                int offsety2 = area->y2;
-                                // pass the draw buffer to the driver
-                                // esp_lcd_panel_draw_bitmap(panel_handle, offsetx1, offsety1, offsetx2 + 1, offsety2 + 1, px_map);
-                                screen->send_color_stream(offsetx1, offsetx2, offsety1 , offsety2 , px_map);
-                                
+                                // printf("flush area: x=%d, y=%d, w=%d, h=%d\n", x, y, w, h);
+
+                                lv_draw_sw_rgb565_swap(px_map, w * h);
+
+                                // lvgl的px_map是行优先，rgb565格式
+                                screen->send_color_stream(x, y, w, h, px_map);
+                                // 通知lvgl刷新完成
                                 lv_display_flush_ready(disp); });
 
     lv_indev_t *indev = lv_indev_create();
@@ -139,7 +139,7 @@ void Screen_Init()
 
 #elif defined H0175Y003AM || defined DO0143FMST10
 
-    Screen->begin(SPI_MASTER_FREQ_10M);
+    Screen->begin(SPI_MASTER_FREQ_40M);
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
@@ -247,18 +247,19 @@ extern "C" void app_main(void)
     Screen_Init();
 
     Screen->send_color_stream(0, 0, LCD_WIDTH, LCD_HEIGHT, gImage_1);
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
-    // Lvgl_Init();
-    // xTaskCreate(lvgl_ui_task, "lvgl_ui_task", 10 * 1024, NULL, 1, NULL);
+    Lvgl_Init();
+    xTaskCreate(lvgl_ui_task, "lvgl_ui_task", 10 * 1024, NULL, 1, NULL);
 
-    // // 创建一个简单的按钮，点击时在串口打印 "Ciallo"
-    // lv_obj_t *btn = lv_btn_create(lv_screen_active());
-    // lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
-    // lv_obj_t *label = lv_label_create(btn);
-    // lv_label_set_text(label, "Ciallo");
-    // lv_obj_center(label);
-    // lv_obj_add_event_cb(btn, [](lv_event_t *e)
-    //                     { printf("Ciallo\n"); }, LV_EVENT_CLICKED, NULL);
+    // 创建一个简单的按钮，点击时在串口打印 "Ciallo"
+    lv_obj_t *btn = lv_btn_create(lv_screen_active());
+    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_t *label = lv_label_create(btn);
+    lv_label_set_text(label, "Ciallo");
+    lv_obj_center(label);
+    lv_obj_add_event_cb(btn, [](lv_event_t *e)
+                        { printf("Ciallo\n"); }, LV_EVENT_CLICKED, NULL);
 
     // 设置整个屏幕为白色
     // size_t screen_size = LCD_WIDTH * LCD_HEIGHT * 2; // RGB565: 2 bytes per pixel
@@ -321,11 +322,10 @@ extern "C" void app_main(void)
 #endif
 
                 interrupt_flag = false;
-
-                Cycle_Time = esp_log_timestamp() + 100;
             }
-
-            vTaskDelay(pdMS_TO_TICKS(10));
+            Cycle_Time = esp_log_timestamp() + 100;
         }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
