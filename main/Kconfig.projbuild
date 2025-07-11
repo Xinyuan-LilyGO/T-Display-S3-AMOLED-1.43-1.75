@@ -5,7 +5,7 @@ menu "Example Configuration"
 
     config LV_DEF_REFR_PERIOD
         string "Default refresh period (ms)"
-        default "25"
+        default "30"
 
     config LV_MEM_SIZE_KILOBYTES
         string "Size of the memory used by `lv_malloc()` in kilobytes (>= 2kB)"

@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-10 18:17:13
+ * @LastEditTime: 2025-07-11 09:40:35
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -291,6 +291,20 @@ extern "C" void app_main(void)
     Screen_Init();
 
     Screen->send_color_stream(0, 0, LCD_WIDTH, LCD_HEIGHT, gImage_1);
+    for (uint8_t i = 0; i < 255; i += 5)
+    {
+        Screen->set_brightness(i);
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+    Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::LOW);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::MEDIUM);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::HIGH);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::OFF);
     vTaskDelay(pdMS_TO_TICKS(1000));
 
     Lvgl_Init();
