@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
- * @LastEditTime: 2025-07-14 10:25:26
+ * @LastEditTime: 2025-07-14 10:27:23
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -90,7 +90,7 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 
 | example | `[platformio ide][espressif32-v6.5.0]`<br />`[arduino ide][esp32_v2.0.14]`|`[vscode][esp-idf-v5.4.0]`| description | picture |
 | ------  | ------  | ------ | ------ | ------ |
-| [FT3168](./examples/FT3168) | <p align="center">![alt text][supported] | <p align="center">![alt text][supported] | |  |
+| [FT3168](./examples/FT3168) | <p align="center">![alt text][supported] | | |  |
 | [Original Test](./examples/Original_Test) | <p align="center">![alt text][supported]  || DO0143FAT01(DO0143FMST02)出厂测试 |  |
 | [GFX](./examples/GFX) | <p align="center">![alt text][supported] |  | |  |
 | [GFX FT3168 Image](./examples/GFX_FT3168_Image) | <p align="center">![alt text][supported] |  | |  |
