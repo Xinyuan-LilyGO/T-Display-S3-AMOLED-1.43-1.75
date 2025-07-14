@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-11 09:40:35
+ * @LastEditTime: 2025-07-11 18:15:11
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -75,19 +75,29 @@ void my_touchpad_read(lv_indev_t *indev, lv_indev_data_t *data)
     if (interrupt_flag == true)
     {
 #if defined H0175Y003AM
-        // uint16_t tp_x;
-        // uint16_t tp_y;
-        // uint8_t tp_cnt = 0;
+        uint16_t tp_x;
+        uint16_t tp_y;
+        uint8_t tp_cnt = 0;
 
-        // esp_lcd_touch_read_data(Touch);
+        esp_lcd_touch_read_data(Touch);
 
-        // /* Read data from touch controller */
-        // bool tp_pressed = esp_lcd_touch_get_coordinates(Touch, &tp_x, &tp_y, NULL, &tp_cnt, 1);
-        // if (tp_pressed && tp_cnt > 0)
-        // {
-        //     printf("touch finger: %d\n", tp_cnt);
-        //     printf("touch num [%d] x: %d y: %d\n", tp_cnt, tp_x, tp_y);
-        // }
+        /* Read data from touch controller */
+        bool tp_pressed = esp_lcd_touch_get_coordinates(Touch, &tp_x, &tp_y, NULL, &tp_cnt, 1);
+        if (tp_pressed && tp_cnt > 0)
+        {
+            printf("touch finger: %d\n", tp_cnt);
+            printf("touch num [%d] x: %d y: %d\n", tp_cnt, tp_x, tp_y);
+
+            data->state = LV_INDEV_STATE_PR;
+
+            /*Set the coordinates*/
+            data->point.x = tp_x;
+            data->point.y = tp_y;
+        }
+        else
+        {
+            data->state = LV_INDEV_STATE_REL;
+        }
 
 #elif (defined DO0143FAT01) || (defined DO0143FMST10)
 
