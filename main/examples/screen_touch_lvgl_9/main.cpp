@@ -2,7 +2,7 @@
  * @Description: ft3168
  * @Author: LILYGO_L
  * @Date: 2025-06-13 12:06:14
- * @LastEditTime: 2025-07-11 18:15:11
+ * @LastEditTime: 2025-07-14 09:53:53
  * @License: GPL 3.0
  */
 #include <stdio.h>
@@ -17,7 +17,6 @@
 #include "esp_lcd_panel_ops.h"
 #include "cpp_bus_driver_library.h"
 #include "esp_lcd_touch_cst9217.h"
-#include "esp_lcd_sh8601.h"
 #include "lvgl.h"
 #include "esp_timer.h"
 #include "image_rgb565_16bit_473x467px.h"
@@ -37,7 +36,9 @@ esp_lcd_touch_handle_t Touch = NULL;
 
 auto Iic_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Iic_2>(IIC_SDA, IIC_SCL, I2C_NUM_0);
 
-#elif defined DO0143FAT01 || defined DO0143FMST10
+auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_WIDTH, LCD_HEIGHT, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
+
+#elif defined DO0143FMST10
 
 auto Iic_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Iic_1>(IIC_SDA, IIC_SCL, I2C_NUM_0);
 
@@ -46,6 +47,16 @@ auto Qspi_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Qspi>(LCD_SDIO0, LCD_S
 auto Touch = std::make_unique<Cpp_Bus_Driver::Ft3x68>(Iic_Bus, FT3168_DEVICE_DEFAULT_ADDRESS, DEFAULT_CPP_BUS_DRIVER_VALUE);
 
 auto Screen = std::make_unique<Cpp_Bus_Driver::Co5300>(Qspi_Bus, LCD_WIDTH, LCD_HEIGHT, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Co5300::Color_Format::RGB565);
+
+#elif defined DO0143FAT01
+
+auto Iic_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Iic_1>(IIC_SDA, IIC_SCL, I2C_NUM_0);
+
+auto Qspi_Bus = std::make_shared<Cpp_Bus_Driver::Hardware_Qspi>(LCD_SDIO0, LCD_SDIO1, LCD_SDIO2, LCD_SDIO3, LCD_SCLK, SPI2_HOST);
+
+auto Touch = std::make_unique<Cpp_Bus_Driver::Ft3x68>(Iic_Bus, FT3168_DEVICE_DEFAULT_ADDRESS, DEFAULT_CPP_BUS_DRIVER_VALUE);
+
+auto Screen = std::make_unique<Cpp_Bus_Driver::Sh8601>(Qspi_Bus, LCD_WIDTH, LCD_HEIGHT, LCD_CS, LCD_RST, 0, 0, Cpp_Bus_Driver::Sh8601::Color_Format::RGB565);
 
 #else
 #error "Unknown macro definition. Please select the correct macro definition."
@@ -189,15 +200,7 @@ void Screen_Init()
 {
     printf("Screen_Init\n");
 
-#if defined DO0143FAT01
-
-#elif defined H0175Y003AM || defined DO0143FMST10
-
     Screen->begin(SPI_MASTER_FREQ_40M);
-
-#else
-#error "Unknown macro definition. Please select the correct macro definition."
-#endif
 }
 
 void Touch_Init()
@@ -308,6 +311,8 @@ extern "C" void app_main(void)
     }
     vTaskDelay(pdMS_TO_TICKS(1000));
 
+#if defined H0175Y003AM || defined DO0143FMST10
+
     Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::LOW);
     vTaskDelay(pdMS_TO_TICKS(1000));
     Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::MEDIUM);
@@ -316,6 +321,21 @@ extern "C" void app_main(void)
     vTaskDelay(pdMS_TO_TICKS(1000));
     Screen->set_color_enhance(Cpp_Bus_Driver::Co5300::Color_Enhance::OFF);
     vTaskDelay(pdMS_TO_TICKS(1000));
+
+#elif defined DO0143FAT01
+
+    Screen->set_color_enhance(Cpp_Bus_Driver::Sh8601::Color_Enhance::LOW);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Sh8601::Color_Enhance::MEDIUM);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Sh8601::Color_Enhance::HIGH);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    Screen->set_color_enhance(Cpp_Bus_Driver::Sh8601::Color_Enhance::OFF);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
     Lvgl_Init();
     xTaskCreate(lvgl_ui_task, "lvgl_ui_task", 10 * 1024, NULL, 1, NULL);

@@ -1,7 +1,5 @@
 dependencies:
   lvgl/lvgl:
     version: "9.2.2"
-  espressif/esp_lcd_sh8601:
-    version: "1.0.0"
   waveshare/esp_lcd_touch_cst9217:
     version: "1.0.3"
