@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-07-14 09:56:01
+ * @LastEditTime: 2025-07-14 10:25:20
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -167,6 +167,32 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 6. Select the correct port.
 
 7. Click "<kbd>[√](image/8.png)</kbd>" in the upper right corner to compile,If the compilation is correct, connect the microcontroller to the computer,Click "<kbd>[→](image/9.png)</kbd>" in the upper right corner to download.
+
+### ESP-IDF Visual Studio Code  
+1. Install [Visual Studio Code](https://code.visualstudio.com/Download) by selecting the appropriate version for your operating system.  
+
+2. Open the "Extensions" sidebar in Visual Studio Code (or use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> to open extensions), search for the "ESP-IDF" extension, and install it.  
+
+3. While the extension is installing, use the git command to clone the repository:  
+
+        git clone --recursive https://github.com/Xinyuan-LilyGO/T-Display-S3-AMOLED-1.43-1.75.git
+
+    Ensure you include the `--recursive` flag during cloning. If you forget to include it, you will need to initialize the submodules later by running:  
+
+        git submodule update --init --recursive  
+
+4. Download and install [ESP-IDF v5.4.1](https://dl.espressif.cn/dl/esp-idf/?idf=4.4). Take note of the installation path. Open the previously installed "ESP-IDF" extension and select "Configure ESP-IDF Extension." Choose the "USE EXISTING SETUP" menu, then select "Search ESP-IDF in system." Correctly configure the installation path you noted earlier:  
+   - **Enter ESP-IDF directory (IDF_PATH):** `Your installation path xxx\Espressif\frameworks\esp-idf-v5.4`  
+   - **Enter ESP-IDF Tools directory (IDF_TOOLS_PATH):** `Your installation path xxx\Espressif`  
+    Click the "Install" button at the bottom right to proceed with the framework installation.  
+
+5. Click the "SDK Configuration Editor" in the ESP-IDF extension menu at the bottom of Visual Studio Code. In the search bar, look for the field "Select the example to build" and choose the project you want to compile. Then, search for "Select the camera type" and select the camera model integrated on your board. Save the settings.  
+
+6. Click "Set Espressif Device Target" in the bottom menu bar of Visual Studio Code and select **ESP32P4**. Next, click "Build Project" in the bottom menu bar and wait for the build to complete. Then, click "Select Port to Use," followed by "Flash Project" to upload the program.  
+
+<p align="center" width="100%">
+    <img src="image/1.jpg" alt="example">
+</p>
 
 ### firmware download
 1. Open the project file "tools" and locate the ESP32 burning tool. Open it.
