@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
- * @LastEditTime: 2025-06-24 16:10:25
+ * @LastEditTime: 2025-07-14 09:55:52
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -110,6 +110,8 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 | [Light_Sleep_Wake_Up_H0175Y003AM](./examples/Light_Sleep_Wake_Up_H0175Y003AM) | <p align="center">![alt text][supported]  || H0175Y003AM 新屏幕适配 |  |
 | [lvgl_benchmark](./examples/lvgl_benchmark) | <p align="center">![alt text][supported] |  |  |
 | [iic_scan](./main/examples/iic_scan) |  |<p align="center">![alt text][supported]  |  |
+| [touch](./main/examples/touch) |  |<p align="center">![alt text][supported]  |  |
+| [screen_touch_lvgl_9](./main/examples/screen_touch_lvgl_9) |  |<p align="center">![alt text][supported]  |  |
 
 [supported]: https://img.shields.io/badge/-supported-green "example"
 
