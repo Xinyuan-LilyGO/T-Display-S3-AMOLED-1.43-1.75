@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-07-14 10:27:15
+ * @LastEditTime: 2025-08-04 16:09:13
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -277,7 +277,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 * [FT3168](./information/FT3168.pdf)
 * [PCF8563](./information/PCF8563.pdf)
 * [SH8601](./information/SH8601Z.pdf)
-* [DO0143FAT01](./information/SPEC-DO0143FAT01-20230830.pdf)
+* [DO0143FAT10](./information/DO0143FMST10-DWO.pdf)
 * [AN_SY6970](./information/AN_SY6970.pdf)
 * [EVB_SY6970](./information/EVB_SY6970.pdf)
 
