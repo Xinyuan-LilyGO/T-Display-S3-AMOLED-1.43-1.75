@@ -21,6 +21,17 @@ menu "Example Configuration"
     #     default "2522880"
 
     choice
+        prompt "Select the screen type"
+        default SCREEN_TYPE_DO0143FMST10
+            config SCREEN_TYPE_DO0143FMST10
+                bool "DO0143FMST10"
+            config SCREEN_TYPE_DO0143FAT01
+                bool "DO0143FAT01"
+            config SCREEN_TYPE_H0175Y003AM
+                bool "H0175Y003AM"
+    endchoice
+
+    choice
         prompt "Select the example to build"
         default EXAMPLE_BUILD_SCREEN_TOUCH_LVGL_9
             config EXAMPLE_BUILD_IIC_SCAN
