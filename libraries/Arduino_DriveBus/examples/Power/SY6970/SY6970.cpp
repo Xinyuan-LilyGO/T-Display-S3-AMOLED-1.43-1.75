@@ -25,19 +25,18 @@
  * @Author: LILYGO_L
  * @Date: 2023-11-17 13:34:38
  * @LastEditors: LILYGO_L
- * @LastEditTime: 2023-11-27 17:33:55
+ * @LastEditTime: 2024-02-28 14:19:22
  * @License: GPL 3.0
  */
 #include "Arduino_DriveBus_Library.h"
-#include "pin_config.h"
+
+static bool Temp1 = 0;
 
 std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
     std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);
 
 std::unique_ptr<Arduino_IIC> SY6970(new Arduino_SY6970(IIC_Bus, SY6970_DEVICE_ADDRESS,
                                                        DRIVEBUS_DEFAULT_VALUE, DRIVEBUS_DEFAULT_VALUE));
-
-static bool Temp1 = 0;
 
 void setup()
 {
@@ -117,34 +116,34 @@ void loop()
                   (SY6970->IIC_Read_Device_State(SY6970->Arduino_IIC_Power::Status_Information::POWER_NTC_FAULT_STATUS)).c_str());
 
     Serial.printf("\nInput Voltage: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_INPUT_VOLTAGE));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_INPUT_VOLTAGE));
     Serial.printf("Battery Voltage: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_BATTERY_VOLTAGE));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_BATTERY_VOLTAGE));
     Serial.printf("System Voltage: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_SYSTEM_VOLTAGE));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_SYSTEM_VOLTAGE));
     Serial.printf("NTC Voltage Percentage: %.03f %% \n",
                   (float)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_NTC_VOLTAGE_PERCENTAGE) / 1000.0);
     Serial.printf("Charging Current: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_CHARGING_CURRENT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_CHARGING_CURRENT));
     Serial.printf("Thermal Regulation Threshold: %d ^C \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_THERMAL_REGULATION_THRESHOLD));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_THERMAL_REGULATION_THRESHOLD));
 
     Serial.printf("\nCharging Voltage Limit: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_CHARGING_TARGET_VOLTAGE_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_CHARGING_TARGET_VOLTAGE_LIMIT));
     Serial.printf("Minimum System Voltage Limit: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_MINIMUM_SYSTEM_VOLTAGE_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_MINIMUM_SYSTEM_VOLTAGE_LIMIT));
     Serial.printf("OTG Voltage Limit: %d mV \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_OTG_VOLTAGE_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_OTG_VOLTAGE_LIMIT));
     Serial.printf("Input Current Limit: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_INPUT_CURRENT_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_INPUT_CURRENT_LIMIT));
     Serial.printf("Fast Charge Current Limit: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_FAST_CHARGING_CURRENT_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_FAST_CHARGING_CURRENT_LIMIT));
     Serial.printf("Precharge Charge Current Limit: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_PRECHARGE_CHARGING_CURRENT_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_PRECHARGE_CHARGING_CURRENT_LIMIT));
     Serial.printf("Termination Charge Current Limit: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_TERMINATION_CHARGING_CURRENT_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_TERMINATION_CHARGING_CURRENT_LIMIT));
     Serial.printf("OTG Current Limit: %d mA \n",
-                  (int32_t)SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_OTG_CURRENT_LIMIT));
+                  SY6970->IIC_Read_Device_Value(SY6970->Arduino_IIC_Power::Value_Information::POWER_OTG_CURRENT_LIMIT));
 
     Serial.printf("--------------------SY6970--------------------\n\n");
 

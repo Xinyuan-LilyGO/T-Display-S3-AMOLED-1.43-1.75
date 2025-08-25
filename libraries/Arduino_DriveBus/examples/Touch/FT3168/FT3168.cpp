@@ -15,15 +15,14 @@
  *    2. The Arduino_DriveBus library uses enumerations to register commands and values for chip operations.
  *  The specific executable commands are explained in the chip file under @Description.
  *
- * @version: V1.0.0
+ * @version: V1.1.8
  * @Author: LILYGO_L
  * @Date: 2023-08-25 17:09:20
  * @LastEditors: LILYGO_L
- * @LastEditTime: 2024-01-23 11:04:15
+ * @LastEditTime: 2024-03-12 09:24:48
  * @License: GPL 3.0
  */
 #include "Arduino_DriveBus_Library.h"
-#include "pin_config.h"
 
 static size_t CycleTime = 0;
 
@@ -33,7 +32,7 @@ std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
 void Arduino_IIC_Touch_Interrupt(void);
 
 std::unique_ptr<Arduino_IIC> FT3168(new Arduino_FT3x68(IIC_Bus, FT3168_DEVICE_ADDRESS,
-                                                       DRIVEBUS_DEFAULT_VALUE, TP_INT, Arduino_IIC_Touch_Interrupt));
+                                                       TP_RST, TP_INT, Arduino_IIC_Touch_Interrupt));
 
 void Arduino_IIC_Touch_Interrupt(void)
 {
@@ -44,9 +43,6 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("Ciallo");
-
-    pinMode(LCD_EN, OUTPUT);
-    digitalWrite(LCD_EN, HIGH);
 
     while (FT3168->begin() == false)
     {

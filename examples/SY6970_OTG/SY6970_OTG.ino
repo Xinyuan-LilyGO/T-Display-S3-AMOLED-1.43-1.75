@@ -22,7 +22,7 @@
  * the chip. The specific executable commands are explained in the chip file under @Description.
  *
  * @version: V1.0.0
- * @Author: Xk_w
+ * @Author: LILYGO_L
  * @Date: 2023-11-17 13:34:38
  * @LastEditors: LILYGO_L
  * @LastEditTime: 2024-03-12 18:35:36

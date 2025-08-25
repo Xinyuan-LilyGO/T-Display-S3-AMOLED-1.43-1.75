@@ -281,7 +281,7 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 
 ## 依赖库
 * [Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
-* [Arduino_DriveBus-1.1.12](https://github.com/Xk-w/Arduino_DriveBus)
+* [Arduino_DriveBus-1.1.16]()
 * [JPEGDEC-1.2.8](https://github.com/bitbank2/JPEGDEC)
 * [lvgl-8.3.5](https://lvgl.io)
 * [MiniTV](https://github.com/moononournation/MiniTV)
