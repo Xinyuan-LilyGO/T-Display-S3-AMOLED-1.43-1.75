@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-08-04 16:09:13
+ * @LastEditTime: 2025-09-16 10:41:52
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Display-S3-AMOLED-1.43-1.75</h1>
@@ -188,7 +188,7 @@ T-Display-S3-AMOLED-1.43-1.75 is a development board featuring a high-definition
 
 5. Click the "SDK Configuration Editor" in the ESP-IDF extension menu at the bottom of Visual Studio Code. In the search bar, look for the field "Select the example to build" and choose the project you want to compile. Then, search for "Select the camera type" and select the camera model integrated on your board. Save the settings.  
 
-6. Click "Set Espressif Device Target" in the bottom menu bar of Visual Studio Code and select **ESP32P4**. Next, click "Build Project" in the bottom menu bar and wait for the build to complete. Then, click "Select Port to Use," followed by "Flash Project" to upload the program.  
+6. Click "Set Espressif Device Target" in the bottom menu bar of Visual Studio Code and select **ESP32S3**. Next, click "Build Project" in the bottom menu bar and wait for the build to complete. Then, click "Select Port to Use," followed by "Flash Project" to upload the program.  
 
 <p align="center" width="100%">
     <img src="image/1.jpg" alt="example">

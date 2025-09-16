@@ -187,7 +187,7 @@ T-Display-S3-AMOLED-1.43-1.75是一款基于ESP32S3开发的板载高清AMOLED�
 
 5. 点击 Visual Studio Code 底部菜单栏的 ESP-IDF 扩展菜单“SDK 配置编辑器”，在搜索栏里搜索“Select the example to build”字段，选择你所需要编译的项目，再在搜索栏里搜索“Select the camera type”字段，选择你的板子板载的摄像头类型，点击保存。
 
-6. 点击 Visual Studio Code 底部菜单栏的“设置乐鑫设备目标”，选择**ESP32P4**，点击底部菜单栏的“构建项目”，等待构建完成后点击底部菜单栏的“选择要使用的端口”，之后点击底部菜单栏的“烧录项目”进行烧录程序。
+6. 点击 Visual Studio Code 底部菜单栏的“设置乐鑫设备目标”，选择**ESP32S3**，点击底部菜单栏的“构建项目”，等待构建完成后点击底部菜单栏的“选择要使用的端口”，之后点击底部菜单栏的“烧录项目”进行烧录程序。
 
 <p align="center" width="100%">
     <img src="image/1.jpg" alt="example">
