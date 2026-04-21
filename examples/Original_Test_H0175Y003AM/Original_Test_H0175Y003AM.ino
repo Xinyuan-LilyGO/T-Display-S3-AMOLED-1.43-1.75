@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-04-26 11:48:37
+ * @LastEditTime: 2026-04-20 13:55:36
  * @License: GPL 3.0
  */
 
@@ -21,10 +21,10 @@
 #define IIS_SAMPLE_RATE 44100 // 采样速率
 #define IIS_DATA_BIT 16       // 数据位数
 
-#define WIFI_SSID "xinyuandianzi"
-#define WIFI_PASSWORD "AA15994823428"
-// #define WIFI_SSID "LilyGo-AABB"
-// #define WIFI_PASSWORD "xinyuandianzi"
+// #define WIFI_SSID "xinyuandianzi"
+// #define WIFI_PASSWORD "AA15994823428"
+#define WIFI_SSID "LilyGo-AABB"
+#define WIFI_PASSWORD "xinyuandianzi"
 
 #define WIFI_CONNECT_WAIT_MAX (5000)
 
