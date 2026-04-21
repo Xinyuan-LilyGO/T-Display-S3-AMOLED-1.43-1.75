@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-01-23 13:50:29
+ * @LastEditTime: 2026-04-21 11:26:12
  * @License: GPL 3.0
  */
 
@@ -15,22 +15,27 @@
 #include "Arduino_DriveBus_Library.h"
 #include "Material_16Bit_466x466px.h"
 #include <SD.h>
+#include "TouchDrvCST92xx.h"
 
 // 44.1 KHz
 #define IIS_SAMPLE_RATE 44100 // 采样速率
 #define IIS_DATA_BIT 16       // 数据位数
 
-#define WIFI_SSID "xinyuandianzi"
-#define WIFI_PASSWORD "AA15994823428"
-// #define WIFI_SSID "LilyGo-AABB"
-// #define WIFI_PASSWORD "xinyuandianzi"
+// #define WIFI_SSID "xinyuandianzi"
+// #define WIFI_PASSWORD "AA15994823428"
+#define WIFI_SSID "LilyGo-AABB"
+#define WIFI_PASSWORD "xinyuandianzi"
 
-#define WIFI_CONNECT_WAIT_MAX (5000)
+#define WIFI_CONNECT_WAIT_MAX (10000)
 
 #define NTP_SERVER1 "pool.ntp.org"
 #define NTP_SERVER2 "time.nist.gov"
 #define GMT_OFFSET_SEC 8 * 3600 // Time zone setting function, written as 8 * 3600 in East Eighth Zone (UTC/GMT+8:00)
 #define DAY_LIGHT_OFFSET_SEC 0  // Fill in 3600 for daylight saving time, otherwise fill in 0
+
+#define SOFTWARE_NAME "Original_Test"
+#define SOFTWARE_LASTEDITTIME "202604211058"
+#define BOARD_VERSION "V1.0"
 
 bool Wifi_Connection_Failure_Flag = false;
 
@@ -41,6 +46,8 @@ static uint8_t Image_Flag = 0;
 
 uint8_t OTG_Mode = 0;
 
+bool Skip_Current_Test = false;
+
 SPIClass SPI_2(HSPI);
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
@@ -50,21 +57,32 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
 #if defined DO0143FAT01
 Arduino_GFX *gfx = new Arduino_SH8601(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT);
-#elif defined DO0143FMST10
+
+#elif (defined DO0143FMST10) || (defined H0175Y003AM)
 Arduino_GFX *gfx = new Arduino_CO5300(bus, LCD_RST /* RST */,
                                       0 /* rotation */, false /* IPS */, LCD_WIDTH, LCD_HEIGHT,
                                       6 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
+
 #else
-#error "Unknown macro definition. Please select the correct macro definition."
+#error "Missing required macro definition."
 #endif
 
 std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
     std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);
 
-void Arduino_IIC_Touch_Interrupt(void);
 
-std::unique_ptr<Arduino_IIC> FT3168(new Arduino_CST816x(IIC_Bus, FT3168_DEVICE_ADDRESS,
-                                                        DRIVEBUS_DEFAULT_VALUE, TP_INT, Arduino_IIC_Touch_Interrupt));
+#if defined H0175Y003AM
+
+TouchDrvCST92xx Touch;
+
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
+
+std::unique_ptr<Arduino_IIC> Touch(new Arduino_FT3x68(IIC_Bus, FT3168_DEVICE_ADDRESS,
+                                                        DRIVEBUS_DEFAULT_VALUE));
+
+#else
+#error "Missing required macro definition."
+#endif
 
 std::unique_ptr<Arduino_IIC> SY6970(new Arduino_SY6970(IIC_Bus, SY6970_DEVICE_ADDRESS,
                                                        DRIVEBUS_DEFAULT_VALUE, DRIVEBUS_DEFAULT_VALUE));
@@ -72,9 +90,37 @@ std::unique_ptr<Arduino_IIC> SY6970(new Arduino_SY6970(IIC_Bus, SY6970_DEVICE_AD
 std::unique_ptr<Arduino_IIC> PCF8563(new Arduino_PCF8563(IIC_Bus, PCF8563_DEVICE_ADDRESS,
                                                          DRIVEBUS_DEFAULT_VALUE, DRIVEBUS_DEFAULT_VALUE));
 
-void Arduino_IIC_Touch_Interrupt(void)
+void Skip_Test_Loop(void)
 {
-    FT3168->IIC_Interrupt_Flag = true;
+    uint8_t fingers_number = 0;
+    int32_t touch_x = 0;
+    int32_t touch_y = 0;
+
+#if defined(H0175Y003AM)
+    // CST9217 特殊处理（坐标需要翻转）
+    int16_t temp_touch_x[5];
+    int16_t temp_touch_y[5];
+    if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
+    {
+        fingers_number = 1;
+        touch_x = LCD_WIDTH - temp_touch_x[0];
+        touch_y = LCD_HEIGHT - temp_touch_y[0];
+    }
+#else
+    fingers_number = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+    if (fingers_number == 1)
+    {
+        touch_x = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+        touch_y = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+    }
+#endif
+
+    if (fingers_number == 1 &&
+        touch_x > 80 && touch_x < 386 &&
+        touch_y > 315 && touch_y < 380)
+    {
+        Skip_Current_Test = true;
+    }
 }
 
 void Wifi_STA_Test(void)
@@ -341,8 +387,14 @@ void GFX_Print_Touch_Info_Loop(int32_t touch_x, int32_t touch_y, int32_t fingers
     gfx->setTextSize(2);
     gfx->setTextColor(BLACK);
 
+
+#if defined H0175Y003AM
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
     gfx->setCursor(100, 50);
-    gfx->printf("ID: %#X ", (int32_t)FT3168->IIC_Device_ID());
+    gfx->printf("ID: %#X ", (int32_t)Touch->IIC_Device_ID());
+#else
+#error "Missing required macro definition."
+#endif
 
     gfx->setCursor(100, 70);
     gfx->printf("Fingers Number:%d ", fingers_number);
@@ -369,7 +421,7 @@ void GFX_Print_Voice_Speaker_Info_Loop(int16_t left_channel, int16_t right_chann
 
 void GFX_Print_Time_Info_Loop()
 {
-    gfx->fillRoundRect(130, 30, 206, 120, 10, WHITE);
+    gfx->fillRoundRect(130, 30, 206, 120, 9, WHITE);
 
     if (!Wifi_Connection_Failure_Flag)
     {
@@ -422,6 +474,8 @@ void GFX_Print_1()
 
 void GFX_Print_TEST(String s)
 {
+    Skip_Current_Test = false;  // 每次进入测试前重置跳过标志
+
     gfx->fillScreen(WHITE);
     gfx->setCursor(190, 100);
     gfx->setTextSize(4);
@@ -433,20 +487,45 @@ void GFX_Print_TEST(String s)
     gfx->setTextColor(BLACK);
     gfx->print(s);
 
-    gfx->setCursor(210, 250);
-    gfx->setTextSize(6);
-    gfx->setTextColor(RED);
-    gfx->printf("3");
-    delay(1000);
-    gfx->fillRect(210, 250, 100, 60, WHITE);
-    gfx->setCursor(210, 250);
-    gfx->printf("2");
-    delay(1000);
+    gfx->fillRect(80, 320, 306, 60, RED);      
+    gfx->drawRect(80, 320, 306, 60, CYAN);      
+    gfx->setTextSize(2);                         
+    gfx->setTextColor(WHITE);
+    gfx->setCursor(130, 340);                    
+    gfx->printf("Skip Current Test");
+
+    // gfx->setCursor(210, 250);
+    // gfx->setTextSize(6);
+    // gfx->setTextColor(RED);
+    // gfx->printf("3");
+    // for (int i = 0; i < 100; i++)
+    // {
+    //     Skip_Test_Loop();
+    //     delay(10);
+    //     if (Skip_Current_Test) break;
+    // }
+
+    // gfx->fillRect(210, 250, 100, 60, WHITE);
+    // gfx->setCursor(210, 250);
+    // gfx->printf("2");
+    // for (int i = 0; i < 100; i++)
+    // {
+    //     Skip_Test_Loop();
+    //     delay(10);
+    //     if (Skip_Current_Test) break;
+    // }
+
     gfx->fillRect(210, 250, 100, 60, WHITE);
     gfx->setCursor(210, 250);
     gfx->printf("1");
-    delay(1000);
+    for (int i = 0; i < 100; i++)
+    {
+        Skip_Test_Loop();
+        delay(10);
+        if (Skip_Current_Test) break;
+    }
 }
+
 
 void GFX_Print_FINISH()
 {
@@ -464,25 +543,31 @@ void GFX_Print_START()
     gfx->printf("START");
 }
 
-void Original_Test_1()
+void Original_Test_1()   
 {
-    GFX_Print_TEST("1.Touch Test");
-
     gfx->fillScreen(WHITE);
 
-    int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-    int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-    uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+#if defined H0175Y003AM
 
-    GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers_number);
+    int16_t temp_x[5], temp_y[5];
+    uint8_t fingers = Touch.getPoint(temp_x, temp_y, 1) > 0 ? 1 : 0;
+    int32_t touch_x = fingers ? LCD_WIDTH - temp_x[0] : 0;
+    int32_t touch_y = fingers ? LCD_HEIGHT - temp_y[0] : 0;
 
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
+    int32_t touch_x = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+    int32_t touch_y = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+    uint8_t fingers = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+#else
+#error "Missing required macro definition."
+#endif
+
+    GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers);
     GFX_Print_1();
 }
 
 void Original_Test_2()
 {
-    GFX_Print_TEST("2.LCD Edge Detection Test");
-
     gfx->fillScreen(WHITE);
     gfx->drawRect(1, 1, LCD_WIDTH - 2, LCD_HEIGHT - 2, RED);
 
@@ -493,8 +578,6 @@ void Original_Test_2()
 
 void Original_Test_3()
 {
-    GFX_Print_TEST("3.OLED Backlight Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_START();
@@ -522,8 +605,6 @@ void Original_Test_3()
 
 void Original_Test_4()
 {
-    GFX_Print_TEST("4.OLED Color Test");
-
     gfx->fillScreen(RED);
     delay(3000);
     gfx->fillScreen(GREEN);
@@ -544,8 +625,6 @@ void Original_Test_4()
 
 void Original_Test_5()
 {
-    GFX_Print_TEST("5.OTG Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_OTG_Switch_Info(0);
@@ -554,8 +633,6 @@ void Original_Test_5()
 
 void Original_Test_6()
 {
-    GFX_Print_TEST("6.Battery Voltage Detection Test");
-
     // OTG关
     SY6970->IIC_Write_Device_State(SY6970->Arduino_IIC_Power::Device::POWER_DEVICE_OTG_MODE,
                                    SY6970->Arduino_IIC_Power::Device_State::POWER_DEVICE_OFF);
@@ -571,8 +648,6 @@ void Original_Test_6()
 
 void Original_Test_7()
 {
-    GFX_Print_TEST("7.RTC Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_RTC_Switch_Info();
@@ -582,8 +657,6 @@ void Original_Test_7()
 
 void Original_Test_8()
 {
-    GFX_Print_TEST("8.SD Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_1();
@@ -591,8 +664,6 @@ void Original_Test_8()
 
 void Original_Test_9()
 {
-    GFX_Print_TEST("9.WIFI STA Test");
-
     Wifi_STA_Test();
 
     delay(2000);
@@ -622,357 +693,433 @@ void Original_Test_9()
     GFX_Print_1();
 }
 
+bool Get_Current_Touch(int32_t &touch_x, int32_t &touch_y, uint8_t &fingers_number)
+{
+    fingers_number = 0;
+    touch_x = 0;
+    touch_y = 0;
+
+#if defined(H0175Y003AM)
+        int16_t temp_touch_x[5];
+        int16_t temp_touch_y[5];
+        if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
+        {
+            fingers_number = 1;
+            touch_x = LCD_WIDTH - temp_touch_x[0];
+            touch_y = LCD_HEIGHT - temp_touch_y[0];
+
+            delay(300);
+            return true;
+        }
+
+#else
+    fingers_number = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+    if (fingers_number == 1)
+    {
+        touch_x = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+        touch_y = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+
+        return true;
+    }
+#endif
+    return false;
+}
+
 void Original_Test_Loop()
 {
-    Original_Test_1();
-
-    while (1)
+    GFX_Print_TEST("1.Touch Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_1();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers_number);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_1();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers_number);
+
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("1.Touch Test");
+                        Original_Test_1();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_2();
-
-    while (1)
+    GFX_Print_TEST("2.LCD Edge Detection Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_2();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_2();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("2.LCD Edge Detection Test");
+                        Original_Test_2();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_3();
-
-    while (1)
+    GFX_Print_TEST("3.OLED Backlight Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_3();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_3();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("3.OLED Backlight Test");
+                        Original_Test_3();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_4();
-
-    while (1)
+    GFX_Print_TEST("4.OLED Color Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_4();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_4();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("4.OLED Color Test");
+                        Original_Test_4();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_5();
-
-    while (1)
+    GFX_Print_TEST("5.OTG Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_5();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_5();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
-                }
-                if (touch_x > 150 && touch_x < 316 && touch_y > 150 && touch_y < 210)
-                {
-                    OTG_Mode = !OTG_Mode;
-                    GFX_Print_OTG_Switch_Info(OTG_Mode);
-                    delay(300);
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("5.OTG Test");
+                        Original_Test_5();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
+                    if (touch_x > 150 && touch_x < 316 && touch_y > 150 && touch_y < 210)
+                    {
+                        OTG_Mode = !OTG_Mode;
+                        GFX_Print_OTG_Switch_Info(OTG_Mode);
+                        delay(300);
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_6();
-
-    while (1)
+    GFX_Print_TEST("6.Battery Voltage Detection Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_6();
 
-        if (millis() > CycleTime)
+        while (1)
         {
-            GFX_Print_Battery_Info_Loop();
-            CycleTime = millis() + 1000;
-        }
+            bool temp = false;
 
-        if (FT3168->IIC_Interrupt_Flag == true)
-        {
-            FT3168->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (millis() > CycleTime)
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                GFX_Print_Battery_Info_Loop();
+                CycleTime = millis() + 1000;
+            }
+
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
+
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
+            {
+                if (fingers_number == 1)
                 {
-                    Original_Test_6();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("6.Battery Voltage Detection Test");
+                        Original_Test_6();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_7();
-
-    while (1)
+    GFX_Print_TEST("7.RTC Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_7();
 
-        if (millis() > CycleTime)
+        while (1)
         {
-            GFX_Print_RTC_Info_Loop();
-            CycleTime = millis() + 1000;
-        }
+            bool temp = false;
 
-        if (FT3168->IIC_Interrupt_Flag == true)
-        {
-            FT3168->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (millis() > CycleTime)
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
-                {
-                    Original_Test_7();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
-                }
-                if (touch_x > 150 && touch_x < 316 && touch_y > 210 && touch_y < 270)
-                {
-                    // 关闭RTC
-                    PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
-                                                    PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_OFF);
-                    // 时钟传感器设置秒
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_SECOND_DATA,
-                                                    58);
-                    // 时钟传感器设置分
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_MINUTE_DATA,
-                                                    59);
-                    // 时钟传感器设置时
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_HOUR_DATA,
-                                                    23);
-                    // 时钟传感器设置天
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_DAY_DATA,
-                                                    31);
-                    // 时钟传感器设置月
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_MONTH_DATA,
-                                                    12);
-                    // 时钟传感器设置
-                    PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_YEAR_DATA,
-                                                    99);
-                    // 开启RTC
-                    PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
-                                                    PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_ON);
+                GFX_Print_RTC_Info_Loop();
+                CycleTime = millis() + 1000;
+            }
 
-                    delay(300);
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
+
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
+            {
+                if (fingers_number == 1)
+                {
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("7.RTC Test");
+                        Original_Test_7();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
+                    if (touch_x > 150 && touch_x < 316 && touch_y > 210 && touch_y < 270)
+                    {
+                        // RTC Reset logic
+                        PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
+                                                        PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_OFF);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_SECOND_DATA, 58);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_MINUTE_DATA, 59);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_HOUR_DATA, 23);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_DAY_DATA, 31);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_MONTH_DATA, 12);
+                        PCF8563->IIC_Write_Device_Value(PCF8563->Arduino_IIC_RTC::Device_Value::RTC_SET_YEAR_DATA, 99);
+                        PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
+                                                        PCF8563->Arduino_IIC_RTC::Device_State::RTC_DEVICE_ON);
+
+                        delay(300);
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_8();
-
-    while (1)
+    GFX_Print_TEST("8.SD Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_8();
 
-        if (millis() > CycleTime)
+        while (1)
         {
-            GFX_Print_SD_Info_Loop();
-            CycleTime = millis() + 1000;
-        }
+            bool temp = false;
 
-        if (FT3168->IIC_Interrupt_Flag == true)
-        {
-            FT3168->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (millis() > CycleTime)
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                GFX_Print_SD_Info_Loop();
+                CycleTime = millis() + 1000;
+            }
+
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
+
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
+            {
+                if (fingers_number == 1)
                 {
-                    Original_Test_8();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("8.SD Test");
+                        Original_Test_8();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 
-    Original_Test_9();
-
-    while (1)
+    GFX_Print_TEST("9.WIFI STA Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_9();
 
-        if (FT3168->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            FT3168->IIC_Interrupt_Flag = false;
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
 
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
             {
-                if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                if (fingers_number == 1)
                 {
-                    Original_Test_9();
-                }
-                if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
-                {
-                    temp = true;
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("9.WIFI STA Test");
+                        Original_Test_9();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
 }
@@ -981,6 +1128,20 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("Ciallo");
+
+#if defined DO0143FAT01
+    Serial.println("[T-Display-S3-AMOLED-1.43_" + (String)BOARD_VERSION "][" + (String)SOFTWARE_NAME +
+                "(DO0143FAT01)]_firmware_" + (String)SOFTWARE_LASTEDITTIME);
+#elif defined H0175Y003AM
+    Serial.println("[T-Display-S3-AMOLED-1.75_" + (String)BOARD_VERSION "][" + (String)SOFTWARE_NAME +
+                "(H0175Y003AM)]_firmware_" + (String)SOFTWARE_LASTEDITTIME);
+#elif defined DO0143FMST10
+    Serial.println("[T-Display-S3-AMOLED-1.43_" + (String)BOARD_VERSION "][" + (String)SOFTWARE_NAME +
+                "(DO0143FMST10)]_firmware_" + (String)SOFTWARE_LASTEDITTIME);
+#else
+#error "Missing required macro definition."
+#endif
+
 
     pinMode(LCD_EN, OUTPUT);
     digitalWrite(LCD_EN, HIGH);
@@ -1027,7 +1188,23 @@ void setup()
     // OTG电流限制设置为500mA
     SY6970->IIC_Write_Device_Value(SY6970->Arduino_IIC_Power::Device_Value::POWER_DEVICE_OTG_CHARGING_LIMIT, 500);
 
-    if (FT3168->begin() == false)
+#if defined H0175Y003AM
+    // Set to skip register check, used when the touch device address conflicts with other I2C device addresses [0x5A]
+    Touch.jumpCheck();
+
+    Touch.setPins(-1, TP_INT);
+    if (Touch.begin(Wire, 0x5A, IIC_SDA, IIC_SCL) == false)
+    {
+        Serial.println("CST9217 initialization failed");
+    }
+    else
+    {
+        Serial.print("Model :");
+        Serial.println(Touch.getModelName());
+    }
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
+
+    if (Touch->begin() == false)
     {
         Serial.println("FT3168 initialization fail");
         delay(2000);
@@ -1038,8 +1215,12 @@ void setup()
     }
 
     // 中断模式为检测到触摸时，发出低脉冲
-    FT3168->IIC_Write_Device_State(FT3168->Arduino_IIC_Touch::Device::TOUCH_DEVICE_INTERRUPT_MODE,
-                                   FT3168->Arduino_IIC_Touch::Device_Mode::TOUCH_DEVICE_INTERRUPT_PERIODIC);
+    Touch->IIC_Write_Device_State(Touch->Arduino_IIC_Touch::Device::TOUCH_DEVICE_INTERRUPT_MODE,
+                                   Touch->Arduino_IIC_Touch::Device_Mode::TOUCH_DEVICE_INTERRUPT_PERIODIC);
+
+#else
+#error "Missing required macro definition."
+#endif
 
     if (PCF8563->begin() == false)
     {
@@ -1055,10 +1236,17 @@ void setup()
     PCF8563->IIC_Write_Device_State(PCF8563->Arduino_IIC_RTC::Device::RTC_CLOCK_RTC,
                                     PCF8563->Arduino_IIC_RTC::Device_Mode::RTC_CLOCK_OUTPUT_OFF);
 
-    gfx->begin(6500000);
+    gfx->begin();
     gfx->fillScreen(WHITE);
 
+#if defined H0175Y003AM
+    gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_4, LCD_WIDTH, LCD_HEIGHT); // RGB
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
     gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_3, LCD_WIDTH, LCD_HEIGHT); // RGB
+#else
+#error "Missing required macro definition."
+#endif
+
 
     for (int i = 0; i <= 255; i++)
     {
@@ -1084,52 +1272,98 @@ void loop()
         CycleTime_2 = millis() + 1000;
     }
 
-    if (FT3168->IIC_Interrupt_Flag == true)
+#if defined H0175Y003AM
+    int16_t temp_touch_x[5];
+    int16_t temp_touch_y[5];
+
+    if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
     {
-        FT3168->IIC_Interrupt_Flag = false;
+        int32_t touch_x = LCD_WIDTH - temp_touch_x[0];
+        int32_t touch_y = LCD_HEIGHT - temp_touch_y[0];
 
-        uint8_t fingers_number = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-        if (fingers_number > 0)
+        switch (Image_Flag)
         {
-            delay(300);
-
-            int32_t touch_x = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = FT3168->IIC_Read_Device_Value(FT3168->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-
-            switch (Image_Flag)
-            {
-            case 0:
-                gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_1, LCD_WIDTH, LCD_HEIGHT); // RGB
-                break;
-            case 1:
-                gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
-                break;
-            case 2:
-                gfx->fillScreen(PINK);
-                gfx->setCursor(150, 200);
-                gfx->setTextColor(YELLOW);
-                gfx->setTextSize(2);
-                gfx->println("Ciallo1~(L *##*L)^**");
-                break;
-
-            default:
-                break;
-            }
-
-            Image_Flag++;
-
-            if (Image_Flag > 2)
-            {
-                Image_Flag = 0;
-            }
-
-            Serial.printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
-
+        case 0:
+            gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_1, LCD_WIDTH, LCD_HEIGHT); // RGB
+            break;
+        case 1:
+            gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
+            break;
+        case 2:
+            gfx->fillScreen(PINK);
+            gfx->setCursor(150, 200);
+            gfx->setTextColor(YELLOW);
             gfx->setTextSize(2);
-            gfx->setCursor(touch_x, touch_y);
-            gfx->setTextColor(RED);
-            gfx->printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
+            gfx->println("Ciallo1~(L *##*L)^**");
+            break;
+
+        default:
+            break;
         }
+
+        Image_Flag++;
+
+        if (Image_Flag > 2)
+        {
+            Image_Flag = 0;
+        }
+
+        Serial.printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
+
+        gfx->setTextSize(2);
+        gfx->setCursor(touch_x, touch_y);
+        gfx->setTextColor(RED);
+        gfx->printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
+
+            delay(300);
     }
+#elif (defined DO0143FMST10) || (defined DO0143FAT01)
+    uint8_t fingers_number = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+    if (fingers_number == 1)
+    {
+        delay(300);
+
+        int32_t touch_x = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+        int32_t touch_y = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+
+        switch (Image_Flag)
+        {
+        case 0:
+            gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_1, LCD_WIDTH, LCD_HEIGHT); // RGB
+            break;
+        case 1:
+            gfx->draw16bitRGBBitmap(0, 0, (uint16_t *)gImage_2, LCD_WIDTH, LCD_HEIGHT); // RGB
+            break;
+        case 2:
+            gfx->fillScreen(PINK);
+            gfx->setCursor(150, 200);
+            gfx->setTextColor(YELLOW);
+            gfx->setTextSize(2);
+            gfx->println("Ciallo1~(L *##*L)^**");
+            break;
+
+        default:
+            break;
+        }
+
+        Image_Flag++;
+
+        if (Image_Flag > 2)
+        {
+            Image_Flag = 0;
+        }
+
+        Serial.printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
+
+        gfx->setTextSize(2);
+        gfx->setCursor(touch_x, touch_y);
+        gfx->setTextColor(RED);
+        gfx->printf("[1] point x: %d  point y: %d \r\n", touch_x, touch_y);
+    }
+#else
+#error "Missing required macro definition."
+#endif
+
+   
 }
