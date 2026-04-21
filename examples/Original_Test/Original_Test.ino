@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2026-04-21 11:26:12
+ * @LastEditTime: 2026-04-21 16:58:36
  * @License: GPL 3.0
  */
 
@@ -34,7 +34,7 @@
 #define DAY_LIGHT_OFFSET_SEC 0  // Fill in 3600 for daylight saving time, otherwise fill in 0
 
 #define SOFTWARE_NAME "Original_Test"
-#define SOFTWARE_LASTEDITTIME "202604211058"
+#define SOFTWARE_LASTEDITTIME "202604211639"
 #define BOARD_VERSION "V1.0"
 
 bool Wifi_Connection_Failure_Flag = false;
@@ -73,6 +73,8 @@ std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
 
 #if defined H0175Y003AM
 
+volatile int8_t IIC_Interrupt_Flag;
+
 TouchDrvCST92xx Touch;
 
 #elif (defined DO0143FMST10) || (defined DO0143FAT01)
@@ -97,15 +99,19 @@ void Skip_Test_Loop(void)
     int32_t touch_y = 0;
 
 #if defined(H0175Y003AM)
-    // CST9217 特殊处理（坐标需要翻转）
-    int16_t temp_touch_x[5];
-    int16_t temp_touch_y[5];
-    if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
+    if (IIC_Interrupt_Flag == true)
     {
-        fingers_number = 1;
-        touch_x = LCD_WIDTH - temp_touch_x[0];
-        touch_y = LCD_HEIGHT - temp_touch_y[0];
-    }
+        IIC_Interrupt_Flag = false;
+        // CST9217 特殊处理（坐标需要翻转）
+        int16_t temp_touch_x[5];
+        int16_t temp_touch_y[5];
+        if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
+        {
+            fingers_number = 1;
+            touch_x = LCD_WIDTH - temp_touch_x[0];
+            touch_y = LCD_HEIGHT - temp_touch_y[0];
+        }
+    } 
 #else
     fingers_number = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
     if (fingers_number == 1)
@@ -526,7 +532,6 @@ void GFX_Print_TEST(String s)
     }
 }
 
-
 void GFX_Print_FINISH()
 {
     gfx->setCursor(160, 100);
@@ -700,6 +705,9 @@ bool Get_Current_Touch(int32_t &touch_x, int32_t &touch_y, uint8_t &fingers_numb
     touch_y = 0;
 
 #if defined(H0175Y003AM)
+    if (IIC_Interrupt_Flag == true)
+    {
+        IIC_Interrupt_Flag = false;
         int16_t temp_touch_x[5];
         int16_t temp_touch_y[5];
         if (Touch.getPoint(temp_touch_x, temp_touch_y, 1) > 0)
@@ -708,9 +716,10 @@ bool Get_Current_Touch(int32_t &touch_x, int32_t &touch_y, uint8_t &fingers_numb
             touch_x = LCD_WIDTH - temp_touch_x[0];
             touch_y = LCD_HEIGHT - temp_touch_y[0];
 
-            delay(300);
+            // delay(300);
             return true;
         }
+    }
 
 #else
     fingers_number = Touch->IIC_Read_Device_Value(Touch->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
@@ -1189,6 +1198,9 @@ void setup()
     SY6970->IIC_Write_Device_Value(SY6970->Arduino_IIC_Power::Device_Value::POWER_DEVICE_OTG_CHARGING_LIMIT, 500);
 
 #if defined H0175Y003AM
+    attachInterrupt(TP_INT, []()
+                    { IIC_Interrupt_Flag = true; }, FALLING);
+                    
     // Set to skip register check, used when the touch device address conflicts with other I2C device addresses [0x5A]
     Touch.jumpCheck();
 
