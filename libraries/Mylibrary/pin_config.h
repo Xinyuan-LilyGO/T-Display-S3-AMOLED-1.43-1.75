@@ -2,13 +2,13 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2023-06-05 13:01:59
- * @LastEditTime: 2026-04-21 16:38:28
+ * @LastEditTime: 2026-06-11 10:31:07
  */
 #pragma once
 
-//这里选择你使用的屏幕
-// #define DO0143FAT01 //DO0143FMST02//1.43 inches (SH8601 FT3168)
-#define H0175Y003AM //1.75 inches (CO5300 CST9217)
+// 这里选择你使用的屏幕
+//  #define DO0143FAT01 //DO0143FMST02//1.43 inches (SH8601 FT3168)
+#define H0175Y003AM  // 1.75 inches (CO5300 CST9217)
 // #define DO0143FMST10 //1.43 inches (CO5300 FT3168)
 
 #define LCD_SDIO0 11
@@ -28,7 +28,7 @@
 #define IIC_SCL 6
 
 // TOUCH
-#define TP_INT 9
+#define TP_INT 42
 
 // Battery Voltage ADC
 #define BATTERY_VOLTAGE_ADC_DATA 4
@@ -40,4 +40,8 @@
 #define SD_SCLK 41
 
 // PCF8563
-#define PCF8563_INT 9
+#define PCF8563_INT 18
+
+// sleep
+#define ENTER_SLEEP 46
+#define EXIT_SLEEP 2

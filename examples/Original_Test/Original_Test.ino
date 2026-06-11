@@ -2,7 +2,7 @@
  * @Description: 出厂测试程序
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2026-04-21 16:58:36
+ * @LastEditTime: 2026-06-11 11:18:26
  * @License: GPL 3.0
  */
 
@@ -698,6 +698,24 @@ void Original_Test_9()
     GFX_Print_1();
 }
 
+void Original_Test_10()
+{
+    gfx->fillScreen(WHITE);
+    gfx->setCursor(30, 80);
+    gfx->setTextSize(2);
+    gfx->setTextColor(BLACK);
+    gfx->printf("Hall Sensor Test\n\n");
+    gfx->printf("Please use a magnet to\n");
+    gfx->printf("trigger the Hall sensor.\n\n");
+    gfx->printf("When the sensor detects\n");
+    gfx->printf("a low level, the device\n");
+    gfx->printf("will enter deep sleep.\n\n");
+    gfx->printf("Press BOOT button (GPIO0)\n");
+    gfx->printf("to wake up.\n");
+
+    GFX_Print_1();
+}
+
 bool Get_Current_Touch(int32_t &touch_x, int32_t &touch_y, uint8_t &fingers_number)
 {
     fingers_number = 0;
@@ -736,7 +754,7 @@ bool Get_Current_Touch(int32_t &touch_x, int32_t &touch_y, uint8_t &fingers_numb
 
 void Original_Test_Loop()
 {
-    GFX_Print_TEST("1.Touch Test");
+    GFX_Print_TEST("Touch Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_1();
@@ -756,7 +774,7 @@ void Original_Test_Loop()
 
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("1.Touch Test");
+                        GFX_Print_TEST("Touch Test");
                         Original_Test_1();
                         if (Skip_Current_Test == true)
                         {
@@ -777,7 +795,68 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("2.LCD Edge Detection Test");
+    GFX_Print_TEST("Hall Sensor Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_10();
+
+        while (1)
+        {
+            // 检测霍尔传感器引脚状态
+            if (digitalRead(ENTER_SLEEP) == LOW)
+            {
+                // 霍尔传感器触发，进入深度睡眠
+                gfx->fillScreen(WHITE);
+                gfx->setCursor(50, 150);
+                gfx->setTextSize(2);
+                gfx->setTextColor(RED);
+                gfx->printf("Hall sensor triggered!\n");
+                gfx->printf("Entering deep sleep...\n");
+                delay(2000);
+
+                gfx->Display_Brightness(0);
+                gfx->displayOff();
+                digitalWrite(LCD_EN, LOW);
+
+                Serial.println("Enter deep sleep (Hall sensor triggered)");
+                gpio_hold_en(GPIO_NUM_0);
+                esp_sleep_enable_ext0_wakeup((gpio_num_t)EXIT_SLEEP, HIGH);
+                esp_deep_sleep_start();
+            }
+
+            bool temp = false;
+            int32_t touch_x = 0;
+            int32_t touch_y = 0;
+            uint8_t fingers_number = 0;
+
+            if (Get_Current_Touch(touch_x, touch_y, fingers_number))
+            {
+                if (fingers_number == 1)
+                {
+                    if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
+                    {
+                        GFX_Print_TEST("Hall Sensor Test");
+                        Original_Test_10();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 243 && touch_x < 386 && touch_y > 300 && touch_y < 360)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("LCD Edge Detection Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_2();
@@ -795,7 +874,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("2.LCD Edge Detection Test");
+                        GFX_Print_TEST("LCD Edge Detection Test");
                         Original_Test_2();
                         if (Skip_Current_Test == true)
                         {
@@ -816,7 +895,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("3.OLED Backlight Test");
+    GFX_Print_TEST("OLED Backlight Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_3();
@@ -834,7 +913,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("3.OLED Backlight Test");
+                        GFX_Print_TEST("OLED Backlight Test");
                         Original_Test_3();
                         if (Skip_Current_Test == true)
                         {
@@ -855,7 +934,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("4.OLED Color Test");
+    GFX_Print_TEST("OLED Color Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_4();
@@ -873,7 +952,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("4.OLED Color Test");
+                        GFX_Print_TEST("OLED Color Test");
                         Original_Test_4();
                         if (Skip_Current_Test == true)
                         {
@@ -894,7 +973,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("5.OTG Test");
+    GFX_Print_TEST("OTG Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_5();
@@ -912,7 +991,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("5.OTG Test");
+                        GFX_Print_TEST("OTG Test");
                         Original_Test_5();
                         if (Skip_Current_Test == true)
                         {
@@ -939,7 +1018,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("6.Battery Voltage Detection Test");
+    GFX_Print_TEST("Battery Voltage Detection Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_6();
@@ -964,7 +1043,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("6.Battery Voltage Detection Test");
+                        GFX_Print_TEST("Battery Voltage Detection Test");
                         Original_Test_6();
                         if (Skip_Current_Test == true)
                         {
@@ -985,7 +1064,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("7.RTC Test");
+    GFX_Print_TEST("RTC Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_7();
@@ -1010,7 +1089,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("7.RTC Test");
+                        GFX_Print_TEST("RTC Test");
                         Original_Test_7();
                         if (Skip_Current_Test == true)
                         {
@@ -1047,7 +1126,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("8.SD Test");
+    GFX_Print_TEST("SD Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_8();
@@ -1072,7 +1151,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("8.SD Test");
+                        GFX_Print_TEST("SD Test");
                         Original_Test_8();
                         if (Skip_Current_Test == true)
                         {
@@ -1093,7 +1172,7 @@ void Original_Test_Loop()
         }
     }
 
-    GFX_Print_TEST("9.WIFI STA Test");
+    GFX_Print_TEST("WIFI STA Test");
     if (Skip_Current_Test == false)
     {
         Original_Test_9();
@@ -1111,7 +1190,7 @@ void Original_Test_Loop()
                 {
                     if (touch_x > 80 && touch_x < 223 && touch_y > 300 && touch_y < 360)
                     {
-                        GFX_Print_TEST("9.WIFI STA Test");
+                        GFX_Print_TEST("WIFI STA Test");
                         Original_Test_9();
                         if (Skip_Current_Test == true)
                         {
@@ -1270,6 +1349,9 @@ void setup()
     gfx->fillScreen(WHITE);
 
     SPI_2.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS); // SPI boots
+
+    pinMode(ENTER_SLEEP, OUTPUT);
+    digitalWrite(ENTER_SLEEP,HIGH);
 
     Original_Test_Loop();
 
