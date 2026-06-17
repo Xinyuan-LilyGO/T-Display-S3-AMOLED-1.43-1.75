@@ -92,6 +92,16 @@ std::unique_ptr<Arduino_IIC> SY6970(new Arduino_SY6970(IIC_Bus, SY6970_DEVICE_AD
 std::unique_ptr<Arduino_IIC> PCF8563(new Arduino_PCF8563(IIC_Bus, PCF8563_DEVICE_ADDRESS,
                                                          DRIVEBUS_DEFAULT_VALUE, DRIVEBUS_DEFAULT_VALUE));
 
+void Vibration_On(void)
+{
+    digitalWrite(VIBRATION_PIN, HIGH);
+}
+
+void Vibration_Off(void)
+{
+    digitalWrite(VIBRATION_PIN, LOW);
+}
+
 void Skip_Test_Loop(void)
 {
     uint8_t fingers_number = 0;
@@ -700,6 +710,8 @@ void Original_Test_9()
 
 void Original_Test_10()
 {
+    Vibration_On();
+
     gfx->fillScreen(WHITE);
     gfx->setCursor(30, 80);
     gfx->setTextSize(2);
@@ -805,6 +817,8 @@ void Original_Test_Loop()
             // 检测霍尔传感器引脚状态
             if (digitalRead(ENTER_SLEEP) == LOW)
             {
+                Vibration_Off();
+
                 // 霍尔传感器触发，进入深度睡眠
                 gfx->fillScreen(WHITE);
                 gfx->setCursor(50, 150);
@@ -851,6 +865,7 @@ void Original_Test_Loop()
 
             if (temp == true)
             {
+                Vibration_Off();
                 break;
             }
         }
@@ -1233,6 +1248,8 @@ void setup()
 
     pinMode(LCD_EN, OUTPUT);
     digitalWrite(LCD_EN, HIGH);
+    pinMode(VIBRATION_PIN, OUTPUT);
+    digitalWrite(VIBRATION_PIN, LOW);
 
     if (SY6970->begin() == false)
     {

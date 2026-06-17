@@ -22,6 +22,7 @@
 #define LCD_HEIGHT 466
 
 #define LCD_EN 16
+#define VIBRATION_PIN 45
 
 // IIC
 #define IIC_SDA 7
